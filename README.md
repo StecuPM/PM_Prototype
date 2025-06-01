@@ -43,7 +43,7 @@ Lista zadań do wykonania
 Pasek postępu
 System odznak cyfrowych
 
-🔧 Implementacja techniczna:
+Implementacja techniczna:
 Zgodność z NFR (Non-Functional Requirements):
 
 Performance: Symulacja ładowania scen < 10s
@@ -59,7 +59,7 @@ Responsywny design
 Animacje i efekty glassmorphism
 Symulacja sesji VR
 
-📊 Mock Data:
+Mock Data:
 Prototyp używa realistycznych danych testowych obejmujących:
 
 Profile studentów i wykładowców
