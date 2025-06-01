@@ -1,0 +1,22 @@
+,,,
+,,,
+,ID,Category (ISO/IEC 25010),Requirement Description
+,NFR_01,Performance,Scene loading time < 10 seconds
+,NFR_02,Performance,Voice delay < 150 ms
+,NFR_03,Performance,Min. 100 users on one VR server instance without FPS drop < 30
+,NFR_04,Scalability,Dynamic scaling of VR instances
+,NFR_05,Scalability,Support for multiple simultaneous lecture sessions
+,NFR_06,Security,GDPR compliance for personal data
+,NFR_07,Security,TLS 1.2+ encryption for connections
+,NFR_08,Security,Ability to report abuse and block users
+,NFR_09,Availability,Availability >= 99% annually
+,NFR_10,Availability,Failover to backup instance within 30 seconds
+,NFR_11,Usability,"Intuitive UI, onboarding time < 15 minutes"
+,NFR_12,Usability,User manual accessible from main menu
+,NFR_13,Accessibility,Accessibility support for visually and hearing impaired users
+,NFR_14,Compatibility,"Support for VR devices: Quest 2+, HTC Vive, WMR"
+,NFR_15,Compatibility,"2D version compatible with Chrome, Firefox, Edge"
+,NFR_16,Reliability,Error logging and admin monitoring
+,NFR_17,Reliability,Session recovery after unexpected crash
+,NFR_18,Maintainability,No data loss after system updates
+,NFR_19,Maintainability,All updates tested in staging before production

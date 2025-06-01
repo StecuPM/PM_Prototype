@@ -1,0 +1,136 @@
+,,
+,,
+,ID:,ID_01
+,Name:,Join virtual lecture
+,Main actors:,"Student, Lecturer"
+,Additional actors:,System VR Platform
+,Level:,User
+,Priority:,High
+,Trigger:,Student selects scheduled lecture from dashboard.
+,Main scenario:,"1. Student logs into the Metaverse platform.
+2. Student selects a lecture session.
+3. System loads virtual lecture hall and positions avatar.
+4. Attendance is recorded.
+5. Lecturer begins teaching using whiteboard and media.
+6. Student interacts via voice or gestures.
+7. Lecture ends, feedback form appears."
+,Alternative:,"3.A. Late join – Avatar joins silently; time of entry logged.
+5.A. Pre-recorded lecture – Video is shown in VR space; user controls playback."
+,Exceptions:,"2.A. No session found – User is redirected to calendar.
+3.A. VR unsupported – Fall back to 2D interface.
+6.A. Connection loss – Attempts reconnect; session marked incomplete if fails."
+,,
+,,
+,,
+,ID:,ID_02
+,Name:,Perform virtual lab experiment
+,Main actors:,Student
+,Additional actors:,"System, Course Tutor"
+,Level:,User
+,Priority:,High
+,Trigger:,Student selects lab assignment.
+,Main scenario:,"1. Student logs in and selects lab module.
+2. System loads virtual lab scene with tools.
+3. Student follows step-by-step simulation instructions.
+4. System validates actions and tracks progress.
+5. Upon completion, results are stored.
+6. Feedback or grade is issued automatically or by tutor."
+,Alternative:,"3.A. Free Mode – Student chooses exploratory mode without instruction steps.
+5.A. Instructor Review – Manual grading available for open-ended tasks."
+,Exceptions:,"2.A. Lab environment fails to load – Student receives error with retry.
+4.A. Student makes repeated critical mistakes – Hint system activates."
+,,
+,,
+,,
+,ID:,ID_03
+,Name:,Explore campus
+,Main actors:,Student
+,Additional actors:,System
+,Level:,User
+,Priority:,Medium
+,Trigger:,Student selects “Explore Campus” option from menu.
+,Main scenario:,"1. Student enters the VR platform and launches campus mode.
+2. System positions avatar near main entrance.
+3. Student navigates freely using controller/gestures.
+4. Interactive hotspots provide info about buildings.
+5. System tracks progress and marks visited locations."
+,Alternative:,"4.A. Enable guided tour – Avatar is led along predefined route with narration.
+5.A. Checklist for gamification – Student unlocks achievements per building."
+,Exceptions:,"3.A. Motion sickness setting enabled – Switches to teleport movement.
+4.A. Student attempts restricted area – Message appears with redirection."
+,,
+,,
+,,
+,ID:,ID_04
+,Name:,Join Social VR Space
+,Main actors:,Student
+,Additional actors:,Admin
+,Level:,User
+,Priority:,Medium
+,Trigger:,Student selects social zone from dashboard.
+,Main scenario:,"1. Student enters shared social environment (e.g., VR café).
+2. Avatar is placed among others in real-time.
+3. System activates audio chat in proximity mode.
+4. Student may engage in voice chat, emoji reactions, or gestures.
+5. Optional games or quizzes are accessible."
+,Alternative:,"3.A. Enable private voice rooms – Student invites friends to join group chat.
+5.A. Scheduled student events – Admin adds DJ nights, open mic, etc."
+,Exceptions:,"3.A. Voice issues – System defaults to text chat.
+4.A. Abusive behavior – Moderation tools allow reporting/muting."
+,,
+,,
+,,
+,ID:,ID_05
+,Name:,Attend Mentoring Session
+,Main actors:,"Student, Lecturer"
+,Additional actors:,System
+,Level:,User
+,Priority:,High
+,Trigger:,Student schedules mentoring session.
+,Main scenario:,"1. Student uses calendar to request 1:1 or group mentoring.
+2. Lecturer approves time; system sends notification.
+3. Student joins VR room at scheduled time.
+4. Interactive whiteboard, file sharing, and screen sharing are available.
+5. Discussion occurs in real-time; notes can be saved."
+,Alternative:,"3.A. Group session – Multiple students join; breakout areas possible.
+5.A. Anonymous mode – Student can ask questions with masked identity."
+,Exceptions:,"1.A. Scheduling conflict – System suggests alternative slots.
+4.A. Technical failure – Session is moved to fallback platform (e.g., MS Teams)."
+,,
+,,
+,,
+,ID:,ID_06
+,Name:,Use Interactive Whiteboard
+,Main actors:,"Students, Lecturer"
+,Additional actors:,-
+,Level:,User
+,Priority:,High
+,Trigger:,Lecture or mentoring session begins.
+,Main scenario:,"1. Lecturer opens interactive whiteboard in VR.
+2. Lecturer writes, draws or uploads slides.
+3. Students see changes live.
+4. Whiteboard state is autosaved.
+5. Lecturer clears, exports or shares final board."
+,Alternative:,"2.A. Use laser pointer – Highlight specific content in slides.
+3.A. Collaborative mode – Students gain permission to draw."
+,Exceptions:,"1.A. File format unsupported – Upload rejected with suggestion.
+4.A. Whiteboard unsaved due to crash – Recovery available on re-entry."
+,,
+,,
+,,
+,ID:,ID_07
+,Name:,Track Orientation Progress
+,Main actors:,Student
+,Additional actors:,System
+,Level:,User
+,Priority:,Medium
+,Trigger:,Student starts orientation module.
+,Main scenario:,"1. Student opens “My Orientation” checklist.
+2. Tasks include visiting key buildings, joining student group, attending intro session.
+3. System updates progress as student completes each action.
+4. Progress bar and “next step” appear.
+5. Upon completion, student unlocks digital badge."
+,Alternative:,"2.A. Link to calendar – Orientation events are synchronized.
+5.A. Bonus content unlocked – Tips for navigating university life."
+,Exceptions:,"3.A. Task not recognized – Manual override with justification request.
+4.A. Badge not issued – Student can request admin review."

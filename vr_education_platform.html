@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR Education Platform - DREAMTEAM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2em;
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .user-details h3 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .user-details p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .status {
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .status.online {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status.in-session {
+            background: #FF9800;
+            color: white;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
+        }
+
+        .lectures .card-icon {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .labs .card-icon {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .campus .card-icon {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .social .card-icon {
+            background: linear-gradient(45deg, #43e97b, #38f9d7);
+            color: white;
+        }
+
+        .mentoring .card-icon {
+            background: linear-gradient(45deg, #fa709a, #fee140);
+            color: white;
+        }
+
+        .progress .card-icon {
+            background: linear-gradient(45deg, #a8edea, #fed6e3);
+            color: #666;
+        }
+
+        .card h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.3em;
+        }
+
+        .card-content {
+            margin-top: 15px;
+        }
+
+        .session-list {
+            list-style: none;
+        }
+
+        .session-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .session-item:last-child {
+            border-bottom: none;
+        }
+
+        .session-time {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .session-status {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .live {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .upcoming {
+            background: #2196F3;
+            color: white;
+        }
+
+        .completed {
+            background: #9E9E9E;
+            color: white;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #dee2e6;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .vr-view {
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            color: white;
+            text-align: center;
+        }
+
+        .vr-environment {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+
+        .participants {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .participant {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .participant-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            margin-right: 8px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1001;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🌐 VR Education Platform</h1>
+            <p>Immersive Learning Experience - DREAMTEAM Project</p>
+        </div>
+
+        <!-- User Info -->
+        <div class="user-info">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div class="avatar" id="userAvatar">JK</div>
+                <div class="user-details">
+                    <h3 id="userName">Jan Kowalski</h3>
+                    <p id="userRole">Computer Science Student • Year 2</p>
+                </div>
+            </div>
+            <div class="status online" id="userStatus">🟢 Online</div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div class="dashboard">
+            <!-- Virtual Lectures Card -->
+            <div class="card lectures" onclick="openModal('lecturesModal')">
+                <div class="card-header">
+                    <div class="card-icon">🎓</div>
+                    <h3>Virtual Lectures</h3>
+                </div>
+                <div class="card-content">
+                    <ul class="session-list">
+                        <li class="session-item">
+                            <div>
+                                <strong>Advanced Algorithms</strong><br>
+                                <span class="session-time">Today 14:00-15:30</span>
+                            </div>
+                            <span class="session-status live">LIVE</span>
+                        </li>
+                        <li class="session-item">
+                            <div>
+                                <strong>Database Systems</strong><br>
+                                <span class="session-time">Tomorrow 10:00-11:30</span>
+                            </div>
+                            <span class="session-status upcoming">Upcoming</span>
+                        </li>
+                        <li class="session-item">
+                            <div>
+                                <strong>Software Engineering</strong><br>
+                                <span class="session-time">Yesterday 16:00-17:30</span>
+                            </div>
+                            <span class="session-status completed">Completed</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Virtual Labs Card -->
+            <div class="card labs" onclick="openModal('labsModal')">
+                <div class="card-header">
+                    <div class="card-icon">🔬</div>
+                    <h3>Virtual Labs</h3>
+                </div>
+                <div class="card-content">
+                    <ul class="session-list">
+                        <li class="session-item">
+                            <div>
+                                <strong>Chemistry Lab - Titration</strong><br>
+                                <span class="session-time">Available 24/7</span>
+                            </div>
+                            <span class="session-status upcoming">Start</span>
+                        </li>
+                        <li class="session-item">
+                            <div>
+                                <strong>Physics - Wave Properties</strong><br>
+                                <span class="session-time">Progress: 75%</span>
+                            </div>
+                            <span class="session-status live">Continue</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Campus Exploration Card -->
+            <div class="card campus" onclick="openModal('campusModal')">
+                <div class="card-header">
+                    <div class="card-icon">🏛️</div>
+                    <h3>Explore Campus</h3>
+                </div>
+                <div class="card-content">
+                    <p>Discover university buildings and facilities in VR</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 60%"></div>
+                    </div>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
+                        6/10 locations visited
+                    </p>
+                </div>
+            </div>
+
+            <!-- Social VR Spaces Card -->
+            <div class="card social" onclick="openModal('socialModal')">
+                <div class="card-header">
+                    <div class="card-icon">👥</div>
+                    <h3>Social Spaces</h3>
+                </div>
+                <div class="card-content">
+                    <ul class="session-list">
+                        <li class="session-item">
+                            <div>
+                                <strong>Study Café</strong><br>
+                                <span class="session-time">12 students online</span>
+                            </div>
+                            <span class="session-status live">Join</span>
+                        </li>
+                        <li class="session-item">
+                            <div>
+                                <strong>Gaming Lounge</strong><br>
+                                <span class="session-time">5 students online</span>
+                            </div>
+                            <span class="session-status upcoming">Join</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Mentoring Sessions Card -->
+            <div class="card mentoring" onclick="openModal('mentoringModal')">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <h3>Mentoring</h3>
+                </div>
+                <div class="card-content">
+                    <ul class="session-list">
+                        <li class="session-item">
+                            <div>
+                                <strong>Career Guidance</strong><br>
+                                <span class="session-time">Dr. Smith - Today 16:00</span>
+                            </div>
+                            <span class="session-status upcoming">Scheduled</span>
+                        </li>
+                    </ul>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;">
+                        Schedule New Session
+                    </button>
+                </div>
+            </div>
+
+            <!-- Orientation Progress Card -->
+            <div class="card progress" onclick="openModal('progressModal')">
+                <div class="card-header">
+                    <div class="card-icon">📈</div>
+                    <h3>Orientation Progress</h3>
+                </div>
+                <div class="card-content">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 80%"></div>
+                    </div>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
+                        8/10 tasks completed
+                    </p>
+                    <p style="font-size: 0.9em; margin-top: 10px;">
+                        🏆 Almost there! Complete campus tour to unlock your digital badge.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Lectures Modal -->
+    <div id="lecturesModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('lecturesModal')">&times;</span>
+            <h2>🎓 Virtual Lectures</h2>
+            <div class="vr-view">
+                <h3>Join Advanced Algorithms Lecture</h3>
+                <div class="vr-environment">
+                    <p>🏛️ Virtual Lecture Hall - Room 101</p>
+                    <p>Loading immersive environment...</p>
+                </div>
+                <div class="participants">
+                    <div class="participant">
+                        <div class="participant-avatar"></div>
+                        Prof. Johnson (Lecturer)
+                    </div>
+                    <div class="participant">
+                        <div class="participant-avatar"></div>
+                        Anna K.
+                    </div>
+                    <div class="participant">
+                        <div class="participant-avatar"></div>
+                        Tomasz P.
+                    </div>
+                    <div class="participant">
+                        <div class="participant-avatar"></div>
+                        +23 others
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="joinSession('lecture')">
+                    🥽 Enter VR Lecture Hall
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Labs Modal -->
+    <div id="labsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('labsModal')">&times;</span>
+            <h2>🔬 Virtual Laboratory</h2>
+            <div class="vr-view">
+                <h3>Chemistry Lab - Acid-Base Titration</h3>
+                <div class="vr-environment">
+                    <p>🧪 Virtual Chemistry Laboratory</p>
+                    <p>Equipment: Burette, Pipette, Conical Flask, pH Meter</p>
+                    <p>Safety protocols activated in VR environment</p>
+                </div>
+                <div style="text-align: left; margin: 15px 0;">
+                    <h4>Experiment Steps:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>✅ Set up titration apparatus</li>
+                        <li>✅ Prepare standard solution</li>
+                        <li>⏳ Add indicator to sample</li>
+                        <li>⏹️ Perform titration</li>
+                        <li>⏹️ Record results</li>
+                    </ul>
+                </div>
+                <button class="btn btn-primary" onclick="joinSession('lab')">
+                    🥽 Enter Virtual Lab
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Campus Modal -->
+    <div id="campusModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('campusModal')">&times;</span>
+            <h2>🏛️ Campus Exploration</h2>
+            <div class="vr-view">
+                <h3>Virtual Campus Tour</h3>
+                <div class="vr-environment">
+                    <p>🗺️ Interactive Campus Map</p>
+                    <p>Navigate freely using VR controllers or gestures</p>
+                </div>
+                <div style="text-align: left; margin: 15px 0;">
+                    <h4>Locations to Visit:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>✅ Main Library</li>
+                        <li>✅ Computer Science Building</li>
+                        <li>✅ Student Cafeteria</li>
+                        <li>✅ Sports Complex</li>
+                        <li>✅ Administration Office</li>
+                        <li>✅ Dormitory</li>
+                        <li>⏹️ Engineering Labs</li>
+                        <li>⏹️ Art Gallery</li>
+                        <li>⏹️ Medical Center</li>
+                        <li>⏹️ Student Union</li>
+                    </ul>
+                </div>
+                <button class="btn btn-primary" onclick="joinSession('campus')">
+                    🥽 Start Campus Tour
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Social Modal -->
+    <div id="socialModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('socialModal')">&times;</span>
+            <h2>👥 Social VR Spaces</h2>
+            <div class="vr-view">
+                <h3>Study Café</h3>
+                <div class="vr-environment">
+                    <p>☕ Cozy Virtual Study Environment</p>
+                    <p>Voice chat, group study tables, ambient sounds</p>
+                </div>
+                <div class="participants">
+                    <div class="participant">
+                        <div class="participant-avatar"></div>
+                        Maria S.
+                    </div>
+                    <div class="participant">
+                        <div class="participant-avatar"></div>
+                        Piotr K.
+                    </div>
+                    <div class="participant">
+                        <div class="participant-avatar"></div>
+                        Elena M.
+                    </div>
+                    <div class="participant">
+                        <div class="participant-avatar"></div>
+                        +9 others
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="joinSession('social')">
+                    🥽 Join Study Café
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mentoring Modal -->
+    <div id="mentoringModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('mentoringModal')">&times;</span>
+            <h2>🎯 Mentoring Session</h2>
+            <div class="vr-view">
+                <h3>Career Guidance with Dr. Smith</h3>
+                <div class="vr-environment">
+                    <p>🏢 Private Mentoring Room</p>
+                    <p>Interactive whiteboard, document sharing, screen sharing</p>
+                </div>
+                <div style="text-align: left; margin: 15px 0;">
+                    <h4>Session Agenda:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>Career path discussion</li>
+                        <li>Skills assessment</li>
+                        <li>Industry insights</li>
+                        <li>Goal setting</li>
+                    </ul>
+                </div>
+                <button class="btn btn-primary" onclick="joinSession('mentoring')">
+                    🥽 Join Mentoring Session
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Modal -->
+    <div id="progressModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('progressModal')">&times;</span>
+            <h2>📈 Orientation Progress</h2>
+            <div style="text-align: left;">
+                <h3>Welcome Tasks Checklist</h3>
+                <div style="margin: 20px 0;">
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Complete VR platform tutorial</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Join first virtual lecture</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Visit library in campus tour</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Join social VR space</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Complete first lab experiment</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Schedule mentoring session</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Use interactive whiteboard</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Connect with study group</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">⏳</span>
+                        <span><strong>Complete full campus exploration</strong></span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">⏹️</span>
+                        <span>Attend orientation ceremony</span>
+                    </div>
+                </div>
+                <div style="text-align: center; margin: 20px 0;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 80%"></div>
+                    </div>
+                    <p style="color: #666; margin-top: 10px;">80% Complete - Almost there! 🏆</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notificationText">Successfully joined VR session!</span>
+    </div>
+
+    <script>
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show welcome notification
+            setTimeout(() => {
+                const notification = document.getElementById('notification');
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            }, 1000);
+        });
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function joinSession(sessionType) {
+            const messages = {
+                lecture: 'Joining virtual lecture hall...',
+                lab: 'Entering virtual laboratory...',
+                campus: 'Starting campus exploration...',
+                social: 'Connecting to social space...',
+                mentoring: 'Joining mentoring session...'
+            };
+            
+            alert(messages[sessionType] || 'Starting VR session...');
+            closeModal(document.querySelector('.modal[style*="block"]')?.id);
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Visit library in campus tour</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Join social VR space</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Complete first lab experiment</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Schedule mentoring session</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Use interactive whiteboard</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Connect with study group</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">⏳</span>
+                        <span><strong>Complete full campus exploration</strong></span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">⏹️</span>
+                        <span>Attend orientation ceremony</span>
+                    </div>
+                </div>
+                <div style="text-align: center; margin: 20px 0;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 80%"></div>
+                    </div>
+                    <p style="color: #666; margin-top: 10px;">80% Complete - Almost there! 🏆</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notificationText">Successfully joined VR session!</span>
+    </div>
+
+    <script>
+        // Mock data for the application
+        const mockData = {
+            user: {
+                name: "Jan Kowalski",
+                role: "Computer Science Student • Year 2",
+                avatar: "JK",
+                status: "online"
+            },
+            lectures: [
+                {
+                    id: "lec_01",
+                    name: "Advanced Algorithms",
+                    lecturer: "Prof. Johnson",
+                    time: "Today 14:00-15:30",
+                    status: "live",
+                    participants: 26,
+                    room: "Virtual Lecture Hall - Room 101"
+                },
+                {
+                    id: "lec_02",
+                    name: "Database Systems",
+                    lecturer: "Dr. Peterson",
+                    time: "Tomorrow 10:00-11:30",
+                    status: "upcoming",
+                    participants: 0,
+                    room: "Virtual Lecture Hall - Room 203"
+                },
+                {
+                    id: "lec_03",
+                    name: "Software Engineering",
+                    lecturer: "Prof. Wilson",
+                    time: "Yesterday 16:00-17:30",
+                    status: "completed",
+                    participants: 28,
+                    room: "Virtual Lecture Hall - Room 105"
+                }
+            ],
+            labs: [
+                {
+                    id: "lab_01",
+                    name: "Chemistry Lab - Titration",
+                    type: "Chemistry",
+                    progress: 0,
+                    status: "available",
+                    difficulty: "Intermediate",
+                    duration: "45 minutes"
+                },
+                {
+                    id: "lab_02",
+                    name: "Physics - Wave Properties",
+                    type: "Physics",
+                    progress: 75,
+                    status: "in_progress",
+                    difficulty: "Advanced",
+                    duration: "60 minutes"
+                },
+                {
+                    id: "lab_03",
+                    name: "Biology - Cell Structure",
+                    type: "Biology",
+                    progress: 100,
+                    status: "completed",
+                    difficulty: "Beginner",
+                    duration: "30 minutes"
+                }
+            ],
+            campus: {
+                totalLocations: 10,
+                visitedLocations: 6,
+                progress: 60,
+                locations: [
+                    { name: "Main Library", visited: true },
+                    { name: "Computer Science Building", visited: true },
+                    { name: "Student Cafeteria", visited: true },
+                    { name: "Sports Complex", visited: true },
+                    { name: "Administration Office", visited: true },
+                    { name: "Dormitory", visited: true },
+                    { name: "Engineering Labs", visited: false },
+                    { name: "Art Gallery", visited: false },
+                    { name: "Medical Center", visited: false },
+                    { name: "Student Union", visited: false }
+                ]
+            },
+            socialSpaces: [
+                {
+                    id: "social_01",
+                    name: "Study Café",
+                    participants: 12,
+                    type: "study",
+                    description: "Cozy virtual study environment with ambient sounds"
+                },
+                {
+                    id: "social_02",
+                    name: "Gaming Lounge",
+                    participants: 5,
+                    type: "recreation",
+                    description: "Multiplayer games and casual hangout space"
+                },
+                {
+                    id: "social_03",
+                    name: "Discussion Forum",
+                    participants: 8,
+                    type: "academic",
+                    description: "Academic discussions and group projects"
+                }
+            ],
+            orientation: {
+                totalTasks: 10,
+                completedTasks: 8,
+                progress: 80,
+                tasks: [
+                    { name: "Complete VR platform tutorial", completed: true },
+                    { name: "Join first virtual lecture", completed: true },
+                    { name: "Visit library in campus tour", completed: true },
+                    { name: "Join social VR space", completed: true },
+                    { name: "Complete first lab experiment", completed: true },
+                    { name: "Schedule mentoring session", completed: true },
+                    { name: "Use interactive whiteboard", completed: true },
+                    { name: "Connect with study group", completed: true },
+                    { name: "Complete full campus exploration", completed: false, current: true },
+                    { name: "Attend orientation ceremony", completed: false }
+                ]
+            }
+        };
+
+        // Application state
+        let appState = {
+            currentUser: mockData.user,
+            activeSession: null,
+            notifications: []
+        };
+
+        // Utility functions
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.style.display = 'block';
+            notification.style.background = type === 'success' ? '#4CAF50' : '#f44336';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            
+            // Add some mock loading animation
+            setTimeout(() => {
+                const vrEnvironments = document.querySelectorAll('.vr-environment');
+                vrEnvironments.forEach(env => {
+                    if (env.textContent.includes('Loading')) {
+                        env.innerHTML = env.innerHTML.replace('Loading immersive environment...', '✅ Environment loaded successfully!');
+                    }
+                });
+            }, 1500);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function joinSession(sessionType) {
+            const sessionMessages = {
+                lecture: 'Joining virtual lecture hall...',
+                lab: 'Entering virtual laboratory...',
+                campus: 'Starting campus exploration...',
+                social: 'Connecting to social space...',
+                mentoring: 'Joining mentoring session...'
+            };
+
+            showNotification(sessionMessages[sessionType]);
+            
+            // Update user status
+            const statusElement = document.getElementById('userStatus');
+            statusElement.className = 'status in-session';
+            statusElement.textContent = '🔵 In VR Session';
+            
+            // Simulate session activity
+            setTimeout(() => {
+                statusElement.className = 'status online';
+                statusElement.textContent = '🟢 Online';
+                showNotification('VR session completed successfully!');
+                
+                // Update progress if it's orientation-related
+                if (sessionType === 'campus') {
+                    updateOrientationProgress();
+                }
+            }, 5000);
+            
+            // Close modal
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => modal.style.display = 'none');
+        }
+
+        function updateOrientationProgress() {
+            // Simulate completing the campus exploration task
+            mockData.orientation.completedTasks = 9;
+            mockData.orientation.progress = 90;
+            
+            // Update the task
+            mockData.orientation.tasks[8].completed = true;
+            mockData.orientation.tasks[8].current = false;
+            mockData.orientation.tasks[9].current = true;
+            
+            showNotification('Campus exploration completed! Orientation progress updated.');
+            
+            // Update the campus card progress
+            const campusCard = document.querySelector('.campus .progress-fill');
+            if (campusCard) {
+                campusCard.style.width = '100%';
+            }
+            
+            // Update campus locations visited
+            mockData.campus.visitedLocations = 10;
+            mockData.campus.progress = 100;
+        }
+
+        // Simulated real-time updates
+        function simulateRealTimeUpdates() {
+            setInterval(() => {
+                // Randomly update participant counts in social spaces
+                const socialCards = document.querySelectorAll('.social .session-time');
+                socialCards.forEach(card => {
+                    if (card.textContent.includes('students online')) {
+                        const currentCount = parseInt(card.textContent.match(/\d+/)[0]);
+                        const newCount = Math.max(1, currentCount + Math.floor(Math.random() * 3) - 1);
+                        card.textContent = `${newCount} students online`;
+                    }
+                });
+                
+                // Update lecture status occasionally
+                const lectureStatusElements = document.querySelectorAll('.lectures .session-status');
+                if (Math.random() < 0.1) { // 10% chance every interval
+                    lectureStatusElements.forEach(status => {
+                        if (status.textContent === 'LIVE' && Math.random() < 0.3) {
+                            status.textContent = 'Ending Soon';
+                            status.className = 'session-status upcoming';
+                        }
+                    });
+                }
+            }, 10000); // Update every 10 seconds
+        }
+
+        // Performance monitoring (NFR compliance simulation)
+        function monitorPerformance() {
+            const performanceMetrics = {
+                sceneLoadTime: Math.random() * 8 + 2, // 2-10 seconds
+                voiceDelay: Math.random() * 100 + 50, // 50-150 ms
+                fps: Math.floor(Math.random() * 30) + 30, // 30-60 FPS
+                activeUsers: Math.floor(Math.random() * 50) + 50 // 50-100 users
+            };
+            
+            // Log performance metrics (in real app, this would be sent to monitoring service)
+            console.log('Performance Metrics:', {
+                sceneLoadTime: performanceMetrics.sceneLoadTime.toFixed(2) + 's',
+                voiceDelay: performanceMetrics.voiceDelay.toFixed(0) + 'ms',
+                fps: performanceMetrics.fps,
+                activeUsers: performanceMetrics.activeUsers,
+                nfrCompliance: {
+                    sceneLoad: performanceMetrics.sceneLoadTime < 10 ? '✅' : '❌',
+                    voiceDelay: performanceMetrics.voiceDelay < 150 ? '✅' : '❌',
+                    minFPS: performanceMetrics.fps >= 30 ? '✅' : '❌',
+                    userCapacity: performanceMetrics.activeUsers <= 100 ? '✅' : '❌'
+                }
+            });
+        }
+
+        // Initialize the application
+        function initializeApp() {
+            // Set user information
+            document.getElementById('userName').textContent = appState.currentUser.name;
+            document.getElementById('userRole').textContent = appState.currentUser.role;
+            document.getElementById('userAvatar').textContent = appState.currentUser.avatar;
+            
+            // Start real-time updates
+            simulateRealTimeUpdates();
+            
+            // Monitor performance every 30 seconds
+            setInterval(monitorPerformance, 30000);
+            monitorPerformance(); // Initial call
+            
+            // Show welcome notification
+            setTimeout(() => {
+                showNotification('Welcome to the VR Education Platform! 🎓');
+            }, 1000);
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            }
+        });
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Additional mock functionality for demonstration
+        function scheduleNewMentoringSession() {
+            showNotification('Mentoring session request sent to Dr. Smith');
+            
+            // Add new session to the list
+            const mentoringList = document.querySelector('.mentoring .session-list');
+            const newSession = document.createElement('li');
+            newSession.className = 'session-item';
+            newSession.innerHTML = `
+                <div>
+                    <strong>Project Review</strong><br>
+                    <span class="session-time">Next week - Pending approval</span>
+                </div>
+                <span class="session-status upcoming">Pending</span>
+            `;
+            mentoringList.appendChild(newSession);
+        }
+
+        // Export functions for potential external use
+        window.VREducationPlatform = {
+            openModal,
+            closeModal,
+            joinSession,
+            showNotification,
+            mockData,
+            appState
+        };
+    </script>
+</body>
+</html>
