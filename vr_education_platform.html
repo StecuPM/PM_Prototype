@@ -357,6 +357,149 @@
             display: none;
         }
 
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-container h1 {
+            color: white;
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .login-container p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        .attendance-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1002;
+            text-align: center;
+            min-width: 300px;
+        }
+
+        .feedback-form {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .feedback-form h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 15px 0;
+        }
+
+        .star {
+            font-size: 24px;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #ffa500;
+        }
+
+        .voice-interaction {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: white;
+            text-align: center;
+        }
+
+        .whiteboard-demo {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            min-height: 150px;
+            position: relative;
+        }
+
+        .whiteboard-tools {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .tool-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .tool-btn:hover {
+            background: #5a67d8;
+        }
+
+        .tool-btn.active {
+            background: #4c51bf;
+        }
+
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -371,7 +514,22 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <h1>🌐 VR Education Platform</h1>
+            <p>Welcome to the Metaverse Learning Experience</p>
+            <div class="login-form">
+                <input type="text" id="loginUsername" placeholder="Student ID or Email" value="jan.kowalski@student.put.poznan.pl">
+                <input type="password" id="loginPassword" placeholder="Password" value="••••••••">
+                <button class="btn btn-primary" onclick="performLogin()" style="width: 100%; margin-top: 15px;">
+                    🚀 Enter Metaverse Platform
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="mainApp" style="display: none;">
         <!-- Header -->
         <div class="header">
             <h1>🌐 VR Education Platform</h1>
@@ -538,7 +696,7 @@
     </div>
 
     <!-- Modals -->
-    <!-- Lectures Modal -->
+    <!-- Lectures Modal - ROZSZERZONY -->
     <div id="lecturesModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('lecturesModal')">&times;</span>
@@ -547,8 +705,46 @@
                 <h3>Join Advanced Algorithms Lecture</h3>
                 <div class="vr-environment">
                     <p>🏛️ Virtual Lecture Hall - Room 101</p>
-                    <p>Loading immersive environment...</p>
+                    <p id="environmentStatus">Loading immersive environment...</p>
                 </div>
+                
+                <!-- Attendance Recording -->
+                <div id="attendanceSection" style="display: none;">
+                    <div style="background: rgba(76, 175, 80, 0.1); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <h4>✅ Attendance Recorded</h4>
+                        <p>Student: Jan Kowalski | Time: 14:02 | Status: Present</p>
+                    </div>
+                </div>
+
+                <!-- Interactive Whiteboard Demo -->
+                <div id="whiteboardSection" style="display: none;">
+                    <div class="whiteboard-demo">
+                        <div class="whiteboard-tools">
+                            <button class="tool-btn active" onclick="selectTool('pen')">✏️ Pen</button>
+                            <button class="tool-btn" onclick="selectTool('eraser')">🧽 Eraser</button>
+                            <button class="tool-btn" onclick="selectTool('text')">📝 Text</button>
+                            <button class="tool-btn" onclick="selectTool('shape')">🔷 Shapes</button>
+                        </div>
+                        <div id="whiteboardContent" style="min-height: 100px; background: white; border-radius: 5px; padding: 10px;">
+                            <p style="color: #667eea; text-align: center; margin-top: 30px;">
+                                📊 Algorithm Complexity Chart<br>
+                                <small>Prof. Johnson is drawing live...</small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voice Interaction -->
+                <div id="voiceSection" style="display: none;">
+                    <div class="voice-interaction">
+                        <h4>🎤 Voice Interaction Active</h4>
+                        <p>You can now ask questions or participate in discussion</p>
+                        <button class="btn btn-secondary" onclick="toggleMicrophone()" id="micBtn">
+                            🎤 Unmute Microphone
+                        </button>
+                    </div>
+                </div>
+
                 <div class="participants">
                     <div class="participant">
                         <div class="participant-avatar"></div>
@@ -567,9 +763,26 @@
                         +23 others
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="joinSession('lecture')">
+                <button class="btn btn-primary" onclick="joinVRLecture()" id="joinLectureBtn">
                     🥽 Enter VR Lecture Hall
                 </button>
+            </div>
+
+            <!-- Feedback Form -->
+            <div id="feedbackSection" style="display: none;">
+                <div class="feedback-form">
+                    <h3>📝 Lecture Feedback</h3>
+                    <p>How would you rate this lecture?</p>
+                    <div class="rating-stars">
+                        <span class="star" onclick="setRating(1)">⭐</span>
+                        <span class="star" onclick="setRating(2)">⭐</span>
+                        <span class="star" onclick="setRating(3)">⭐</span>
+                        <span class="star" onclick="setRating(4)">⭐</span>
+                        <span class="star" onclick="setRating(5)">⭐</span>
+                    </div>
+                    <textarea placeholder="Additional comments..." style="width: 100%; height: 80px; padding: 10px; border-radius: 5px; border: 1px solid #ddd; margin: 10px 0; resize: vertical;"></textarea>
+                    <button class="btn btn-primary" onclick="submitFeedback()">Submit Feedback</button>
+                </div>
             </div>
         </div>
     </div>
@@ -764,46 +977,310 @@
     </div>
 
     <script>
-        // Initialize the app when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            // Show welcome notification
-            setTimeout(() => {
-                const notification = document.getElementById('notification');
-                notification.style.display = 'block';
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 3000);
-            }, 1000);
-        });
+        // Enhanced Mock data with detailed scenarios
+        var mockData = {
+            user: {
+                name: "Jan Kowalski",
+                role: "Computer Science Student • Year 2",
+                avatar: "JK",
+                status: "online",
+                loginTime: null,
+                attendanceRecord: []
+            },
+            lectures: [
+                {
+                    id: "lec_01",
+                    name: "Advanced Algorithms",
+                    lecturer: "Prof. Johnson",
+                    time: "Today 14:00-15:30",
+                    status: "live",
+                    participants: 26,
+                    room: "Virtual Lecture Hall - Room 101",
+                    hasWhiteboard: true,
+                    supportsVoice: true
+                }
+                // ... other lectures
+            ],
+            currentSession: {
+                type: null,
+                startTime: null,
+                attendanceLogged: false,
+                interactionEnabled: false
+            }
+        };
 
-        // Modal functions
+        // Application state
+        var appState = {
+            currentUser: mockData.user,
+            activeSession: null,
+            notifications: [],
+            isLoggedIn: false,
+            currentRating: 0
+        };
+
+        // Login functionality - ID_01 Step 1
+        function performLogin() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!username || !password) {
+                alert('Please enter both username and password');
+                return;
+            }
+
+            // Simulate login process
+            showLoginProgress();
+            
+            setTimeout(() => {
+                appState.isLoggedIn = true;
+                appState.currentUser.loginTime = new Date();
+                
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                
+                showNotification('Successfully logged into Metaverse platform! 🎓');
+                initializeApp();
+            }, 2000);
+        }
+
+        function showLoginProgress() {
+            const loginBtn = document.querySelector('.login-screen .btn');
+            loginBtn.textContent = '🔄 Connecting to Metaverse...';
+            loginBtn.disabled = true;
+        }
+
+        // Enhanced VR Lecture joining - Complete ID_01 scenario
+        function joinVRLecture() {
+            const steps = [
+                { text: 'Loading virtual lecture hall...', delay: 1000 },
+                { text: 'Positioning avatar in 3D space...', delay: 1500 },
+                { text: 'Recording attendance...', delay: 1000 },
+                { text: 'Enabling interactive whiteboard...', delay: 1000 },
+                { text: 'Activating voice interaction...', delay: 1000 }
+            ];
+
+            let currentStep = 0;
+            const statusElement = document.getElementById('environmentStatus');
+            const joinBtn = document.getElementById('joinLectureBtn');
+            
+            joinBtn.textContent = '🔄 Joining Session...';
+            joinBtn.disabled = true;
+
+            function executeStep() {
+                if (currentStep < steps.length) {
+                    statusElement.textContent = steps[currentStep].text;
+                    
+                    setTimeout(() => {
+                        switch(currentStep) {
+                            case 2: // Attendance recording
+                                document.getElementById('attendanceSection').style.display = 'block';
+                                mockData.user.attendanceRecord.push({
+                                    lecture: 'Advanced Algorithms',
+                                    time: new Date(),
+                                    status: 'Present'
+                                });
+                                break;
+                            case 3: // Whiteboard activation
+                                document.getElementById('whiteboardSection').style.display = 'block';
+                                break;
+                            case 4: // Voice interaction
+                                document.getElementById('voiceSection').style.display = 'block';
+                                break;
+                        }
+                        
+                        currentStep++;
+                        if (currentStep < steps.length) {
+                            executeStep();
+                        } else {
+                            completeVRLectureJoin();
+                        }
+                    }, steps[currentStep].delay);
+                }
+            }
+
+            executeStep();
+        }
+
+        function completeVRLectureJoin() {
+            document.getElementById('environmentStatus').textContent = '✅ Successfully joined VR lecture hall!';
+            document.getElementById('joinLectureBtn').textContent = '📚 Lecture in Progress...';
+            
+            // Update user status
+            const statusElement = document.getElementById('userStatus');
+            statusElement.className = 'status in-session';
+            statusElement.textContent = '🔵 In VR Lecture';
+            
+            showNotification('Welcome to the virtual lecture hall! 🎓');
+            
+            // Simulate lecture ending after some time
+            setTimeout(() => {
+                endLecture();
+            }, 8000);
+        }
+
+        function endLecture() {
+            showNotification('Lecture has ended. Please provide your feedback.');
+            document.getElementById('feedbackSection').style.display = 'block';
+            document.getElementById('joinLectureBtn').textContent = '✅ Lecture Completed';
+            
+            // Update user status back to online
+            const statusElement = document.getElementById('userStatus');
+            statusElement.className = 'status online';
+            statusElement.textContent = '🟢 Online';
+        }
+
+        // Interactive Whiteboard Functions
+        var selectedTool = 'pen';
+        
+        function selectTool(tool) {
+            selectedTool = tool;
+            var buttons = document.querySelectorAll('.tool-btn');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+            }
+            
+            // Find clicked button and add active class
+            var toolButtons = document.querySelectorAll('.tool-btn');
+            for (var i = 0; i < toolButtons.length; i++) {
+                if (toolButtons[i].textContent.includes(tool)) {
+                    toolButtons[i].classList.add('active');
+                    break;
+                }
+            }
+            
+            var content = document.getElementById('whiteboardContent');
+            switch(tool) {
+                case 'pen':
+                    content.innerHTML += '<p style="color: blue;">✏️ Drawing with pen tool...</p>';
+                    break;
+                case 'text':
+                    content.innerHTML += '<p style="color: green;">📝 Adding text annotation...</p>';
+                    break;
+            }
+        }
+
+        // Voice Interaction
+        var microphoneActive = false;
+        
+        function toggleMicrophone() {
+            microphoneActive = !microphoneActive;
+            const btn = document.getElementById('micBtn');
+            
+            if (microphoneActive) {
+                btn.textContent = '🔇 Mute Microphone';
+                btn.style.background = '#f44336';
+                showNotification('Microphone activated - you can now speak');
+            } else {
+                btn.textContent = '🎤 Unmute Microphone';
+                btn.style.background = '';
+                showNotification('Microphone muted');
+            }
+        }
+
+        // Feedback System
+        function setRating(rating) {
+            appState.currentRating = rating;
+            var stars = document.querySelectorAll('.star');
+            for (var i = 0; i < stars.length; i++) {
+                if (i < rating) {
+                    stars[i].classList.add('active');
+                } else {
+                    stars[i].classList.remove('active');
+                }
+            }
+        }
+
+        function submitFeedback() {
+            if (appState.currentRating === 0) {
+                alert('Please select a rating before submitting');
+                return;
+            }
+            
+            showNotification('Thank you for your feedback! 🌟');
+            document.getElementById('feedbackSection').style.display = 'none';
+            closeModal('lecturesModal');
+        }
+
+        // Utility functions
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.style.display = 'block';
+            notification.style.background = type === 'success' ? '#4CAF50' : '#f44336';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'block';
         }
 
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
+            
+            // Reset modal states
+            if (modalId === 'lecturesModal') {
+                document.getElementById('attendanceSection').style.display = 'none';
+                document.getElementById('whiteboardSection').style.display = 'none';
+                document.getElementById('voiceSection').style.display = 'none';
+                document.getElementById('feedbackSection').style.display = 'none';
+                document.getElementById('joinLectureBtn').textContent = '🥽 Enter VR Lecture Hall';
+                document.getElementById('joinLectureBtn').disabled = false;
+                document.getElementById('environmentStatus').textContent = 'Loading immersive environment...';
+            }
         }
 
+        // Legacy function for compatibility
         function joinSession(sessionType) {
-            const messages = {
-                lecture: 'Joining virtual lecture hall...',
-                lab: 'Entering virtual laboratory...',
-                campus: 'Starting campus exploration...',
-                social: 'Connecting to social space...',
-                mentoring: 'Joining mentoring session...'
-            };
-            
-            alert(messages[sessionType] || 'Starting VR session...');
-            closeModal(document.querySelector('.modal[style*="block"]')?.id);
+            if (sessionType === 'lecture') {
+                joinVRLecture();
+            } else {
+                // Handle other session types
+                showNotification(`Starting ${sessionType} session...`);
+                setTimeout(() => {
+                    showNotification(`${sessionType} session completed!`);
+                }, 3000);
+            }
+        }
+
+        // Initialize the application
+        function initializeApp() {
+            // Set user information
+            document.getElementById('userName').textContent = appState.currentUser.name;
+            document.getElementById('userRole').textContent = appState.currentUser.role;
+            document.getElementById('userAvatar').textContent = appState.currentUser.avatar;
         }
 
         // Close modals when clicking outside
         window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
+            var modals = document.querySelectorAll('.modal');
+            for (var i = 0; i < modals.length; i++) {
+                if (event.target === modals[i]) {
+                    modals[i].style.display = 'none';
+                }
             }
         }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                var modals = document.querySelectorAll('.modal');
+                for (var i = 0; i < modals.length; i++) {
+                    modals[i].style.display = 'none';
+                }
+            }
+        });
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Start with login screen
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
+        });
     </script>
 </body>
 </html>px 0;">
@@ -1197,4 +1674,12 @@
         };
     </script>
 </body>
-</html>
+</html>px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Complete VR platform tutorial</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <span style="margin-right: 10px;">✅</span>
+                        <span>Join first virtual lecture</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 10
