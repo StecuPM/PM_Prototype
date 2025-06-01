@@ -526,6 +526,60 @@
             font-size: 16px;
         }
 
+        .campus-map {
+            position: relative;
+            background: linear-gradient(135deg, #e8f5e8 0%, #d4f1d4 100%);
+            border: 2px solid #4CAF50;
+        }
+
+        .map-location {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .map-location:hover {
+            transform: scale(1.1);
+            border-color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .map-location.visited {
+            opacity: 0.7;
+            border-color: #4CAF50;
+        }
+
+        .map-location.current {
+            animation: pulse 2s infinite;
+            border-color: #fff;
+        }
+
+        .social-space-card:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
+        }
+
+        .social-space-card.selected {
+            border: 3px solid #43e97b;
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px #43e97b; }
+            50% { box-shadow: 0 0 20px #43e97b; }
+            100% { box-shadow: 0 0 5px #43e97b; }
+        }
+
+        .emoji-btn:hover {
+            transform: scale(1.2);
+            transition: transform 0.2s ease;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
+        }
+
         .equipment-item:hover {
             transform: scale(1.05);
             transition: transform 0.2s ease;
@@ -727,7 +781,7 @@
     </div>
 
     <!-- Modals -->
-    <!-- Lectures Modal - ROZSZERZONY -->
+    <!-- Lectures Modal -->
     <div id="lecturesModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('lecturesModal')">&times;</span>
@@ -818,7 +872,7 @@
         </div>
     </div>
 
-    <!-- Labs Modal - ROZSZERZONY -->
+    <!-- Labs Modal -->
     <div id="labsModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('labsModal')">&times;</span>
@@ -921,24 +975,112 @@
                 <h3>Virtual Campus Tour</h3>
                 <div class="vr-environment">
                     <p>🗺️ Interactive Campus Map</p>
-                    <p>Navigate freely using VR controllers or gestures</p>
+                    <p id="campusEnvironmentStatus">Loading campus environment...</p>
                 </div>
-                <div style="text-align: left; margin: 15px 0;">
-                    <h4>Locations to Visit:</h4>
-                    <ul style="margin-left: 20px;">
-                        <li>✅ Main Library</li>
-                        <li>✅ Computer Science Building</li>
-                        <li>✅ Student Cafeteria</li>
-                        <li>✅ Sports Complex</li>
-                        <li>✅ Administration Office</li>
-                        <li>✅ Dormitory</li>
-                        <li>⏹️ Engineering Labs</li>
-                        <li>⏹️ Art Gallery</li>
-                        <li>⏹️ Medical Center</li>
-                        <li>⏹️ Student Union</li>
-                    </ul>
+
+                <!-- Campus Navigation Controls -->
+                <div id="campusNavigationSection" style="display: none;">
+                    <div style="background: #f0f8ff; padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <h4>🎮 VR Navigation Controls:</h4>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 10px 0;">
+                            <button class="btn btn-secondary" onclick="moveDirection('forward')">⬆️ Move Forward</button>
+                            <button class="btn btn-secondary" onclick="moveDirection('backward')">⬇️ Move Backward</button>
+                            <button class="btn btn-secondary" onclick="moveDirection('left')">⬅️ Turn Left</button>
+                            <button class="btn btn-secondary" onclick="moveDirection('right')">➡️ Turn Right</button>
+                        </div>
+                        <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
+                            Use VR controllers or gestures to navigate freely
+                        </p>
+                    </div>
                 </div>
-                <button class="btn btn-primary" onclick="joinSession('campus')">
+
+                <!-- Interactive Campus Map -->
+                <div id="campusMapSection" style="display: none;">
+                    <h4>🗺️ Campus Map - Click locations to visit:</h4>
+                    <div class="campus-map" style="background: #e8f5e8; border-radius: 10px; padding: 20px; margin: 15px 0; position: relative; min-height: 300px;">
+                        <div class="map-location" data-location="library" onclick="visitLocation('library')" 
+                             style="position: absolute; top: 20%; left: 20%; background: #4CAF50; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">
+                            📚 Main Library
+                        </div>
+                        <div class="map-location" data-location="cs-building" onclick="visitLocation('cs-building')" 
+                             style="position: absolute; top: 30%; left: 60%; background: #2196F3; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">
+                            💻 CS Building
+                        </div>
+                        <div class="map-location" data-location="cafeteria" onclick="visitLocation('cafeteria')" 
+                             style="position: absolute; top: 60%; left: 40%; background: #FF9800; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">
+                            🍽️ Cafeteria
+                        </div>
+                        <div class="map-location" data-location="sports" onclick="visitLocation('sports')" 
+                             style="position: absolute; top: 70%; left: 70%; background: #9C27B0; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">
+                            🏃 Sports Complex
+                        </div>
+                        <div class="map-location" data-location="admin" onclick="visitLocation('admin')" 
+                             style="position: absolute; top: 40%; left: 30%; background: #607D8B; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">
+                            🏢 Administration
+                        </div>
+                        <div class="map-location" data-location="dormitory" onclick="visitLocation('dormitory')" 
+                             style="position: absolute; top: 80%; left: 20%; background: #795548; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">
+                            🏠 Dormitory
+                        </div>
+                        <div class="map-location" data-location="engineering" onclick="visitLocation('engineering')" 
+                             style="position: absolute; top: 50%; left: 80%; background: #FF5722; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">
+                            ⚙️ Engineering Labs
+                        </div>
+                        <div class="map-location" data-location="art" onclick="visitLocation('art')" 
+                             style="position: absolute; top: 20%; left: 70%; background: #E91E63; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">
+                            🎨 Art Gallery
+                        </div>
+                        <div class="map-location" data-location="medical" onclick="visitLocation('medical')" 
+                             style="position: absolute; top: 10%; left: 50%; background: #009688; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">
+                            🏥 Medical Center
+                        </div>
+                        <div class="map-location" data-location="union" onclick="visitLocation('union')" 
+                             style="position: absolute; top: 60%; left: 15%; background: #FFC107; color: black; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">
+                            👥 Student Union
+                        </div>
+                        
+                        <!-- Avatar position indicator -->
+                        <div id="avatarPosition" style="position: absolute; top: 50%; left: 50%; background: #667eea; color: white; padding: 6px; border-radius: 50%; font-size: 16px; z-index: 10;">
+                            🧑‍🎓
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location Information -->
+                <div id="locationInfoSection" style="display: none;">
+                    <div id="locationDetails" style="background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <h4 id="locationName">📍 Current Location</h4>
+                        <p id="locationDescription">Select a location to explore</p>
+                        <div id="locationHotspots" style="margin: 10px 0;"></div>
+                        <button class="btn btn-primary" onclick="exploreLocation()" id="exploreBtn" style="display: none;">
+                            🔍 Explore This Area
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Progress Tracking -->
+                <div id="campusProgressSection" style="display: none;">
+                    <div style="background: #fff3e0; padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <h4>📊 Exploration Progress:</h4>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="campusProgressBar" style="width: 60%"></div>
+                        </div>
+                        <p id="progressText" style="margin: 10px 0; color: #333;">6/10 locations visited</p>
+                        <div id="visitedLocationsList" style="margin-top: 10px;">
+                            <h5>✅ Visited Locations:</h5>
+                            <ul id="visitedList" style="margin-left: 20px; color: #333;">
+                                <li>📚 Main Library</li>
+                                <li>💻 Computer Science Building</li>
+                                <li>🍽️ Student Cafeteria</li>
+                                <li>🏃 Sports Complex</li>
+                                <li>🏢 Administration Office</li>
+                                <li>🏠 Dormitory</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="startCampusExploration()" id="startCampusBtn">
                     🥽 Start Campus Tour
                 </button>
             </div>
@@ -951,31 +1093,118 @@
             <span class="close" onclick="closeModal('socialModal')">&times;</span>
             <h2>👥 Social VR Spaces</h2>
             <div class="vr-view">
-                <h3>Study Café</h3>
+                <h3>Join Social VR Space</h3>
                 <div class="vr-environment">
-                    <p>☕ Cozy Virtual Study Environment</p>
-                    <p>Voice chat, group study tables, ambient sounds</p>
+                    <p>🌐 Virtual Social Environment</p>
+                    <p id="socialEnvironmentStatus">Loading social space...</p>
                 </div>
-                <div class="participants">
-                    <div class="participant">
-                        <div class="participant-avatar"></div>
-                        Maria S.
-                    </div>
-                    <div class="participant">
-                        <div class="participant-avatar"></div>
-                        Piotr K.
-                    </div>
-                    <div class="participant">
-                        <div class="participant-avatar"></div>
-                        Elena M.
-                    </div>
-                    <div class="participant">
-                        <div class="participant-avatar"></div>
-                        +9 others
+
+                <!-- Social Space Selection -->
+                <div id="socialSpaceSelection" style="display: none;">
+                    <h4>🏠 Available Social Spaces:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 15px 0;">
+                        <div class="social-space-card" onclick="selectSocialSpace('study-cafe')" data-space="study-cafe">
+                            <div style="background: linear-gradient(45deg, #8B4513, #D2691E); color: white; padding: 15px; border-radius: 10px; text-align: center; cursor: pointer;">
+                                <h5>☕ Study Café</h5>
+                                <p style="font-size: 0.9em; margin: 5px 0;">Quiet study environment</p>
+                                <p style="font-size: 0.8em;"><span id="cafe-users">12</span> students online</p>
+                            </div>
+                        </div>
+                        <div class="social-space-card" onclick="selectSocialSpace('gaming-lounge')" data-space="gaming-lounge">
+                            <div style="background: linear-gradient(45deg, #FF6B6B, #4ECDC4); color: white; padding: 15px; border-radius: 10px; text-align: center; cursor: pointer;">
+                                <h5>🎮 Gaming Lounge</h5>
+                                <p style="font-size: 0.9em; margin: 5px 0;">Casual games & entertainment</p>
+                                <p style="font-size: 0.8em;"><span id="gaming-users">5</span> students online</p>
+                            </div>
+                        </div>
+                        <div class="social-space-card" onclick="selectSocialSpace('discussion-forum')" data-space="discussion-forum">
+                            <div style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 10px; text-align: center; cursor: pointer;">
+                                <h5>💬 Discussion Forum</h5>
+                                <p style="font-size: 0.9em; margin: 5px 0;">Academic discussions</p>
+                                <p style="font-size: 0.8em;"><span id="forum-users">8</span> students online</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="joinSession('social')">
-                    🥽 Join Study Café
+
+                <!-- Real-time Participants -->
+                <div id="socialParticipantsSection" style="display: none;">
+                    <h4>👥 Current Participants:</h4>
+                    <div class="participants" id="socialParticipantsList">
+                        <div class="participant">
+                            <div class="participant-avatar"></div>
+                            Maria S.
+                        </div>
+                        <div class="participant">
+                            <div class="participant-avatar"></div>
+                            Piotr K.
+                        </div>
+                        <div class="participant">
+                            <div class="participant-avatar"></div>
+                            Elena M.
+                        </div>
+                        <div class="participant">
+                            <div class="participant-avatar"></div>
+                            +9 others
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audio Chat Controls -->
+                <div id="socialAudioSection" style="display: none;">
+                    <div style="background: linear-gradient(45deg, #43e97b, #38f9d7); border-radius: 10px; padding: 15px; margin: 15px 0; color: white; text-align: center;">
+                        <h4>🎤 Proximity Voice Chat Active</h4>
+                        <p>Audio automatically activates when near other avatars</p>
+                        <div style="display: flex; gap: 10px; justify-content: center; margin: 10px 0;">
+                            <button class="btn btn-secondary" onclick="toggleSocialMicrophone()" id="socialMicBtn">
+                                🎤 Mute Microphone
+                            </button>
+                            <button class="btn btn-secondary" onclick="toggleSocialSpeaker()" id="socialSpeakerBtn">
+                                🔊 Mute Speaker
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Activities -->
+                <div id="socialActivitiesSection" style="display: none;">
+                    <h4>🎯 Available Activities:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0;">
+                        <button class="btn btn-secondary" onclick="startSocialActivity('quiz')">
+                            🧠 Quick Quiz
+                        </button>
+                        <button class="btn btn-secondary" onclick="startSocialActivity('game')">
+                            🎲 Mini Games
+                        </button>
+                        <button class="btn btn-secondary" onclick="startSocialActivity('study-group')">
+                            📚 Study Group
+                        </button>
+                        <button class="btn btn-secondary" onclick="startSocialActivity('chat')">
+                            💬 Group Chat
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Emoji Reactions -->
+                <div id="socialReactionsSection" style="display: none;">
+                    <div style="background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <h4>😊 Emoji Reactions:</h4>
+                        <div style="display: flex; gap: 10px; justify-content: center; margin: 10px 0;">
+                            <button class="emoji-btn" onclick="sendReaction('👋')" style="background: none; border: none; font-size: 24px; cursor: pointer;">👋</button>
+                            <button class="emoji-btn" onclick="sendReaction('👍')" style="background: none; border: none; font-size: 24px; cursor: pointer;">👍</button>
+                            <button class="emoji-btn" onclick="sendReaction('👏')" style="background: none; border: none; font-size: 24px; cursor: pointer;">👏</button>
+                            <button class="emoji-btn" onclick="sendReaction('😊')" style="background: none; border: none; font-size: 24px; cursor: pointer;">😊</button>
+                            <button class="emoji-btn" onclick="sendReaction('🤔')" style="background: none; border: none; font-size: 24px; cursor: pointer;">🤔</button>
+                            <button class="emoji-btn" onclick="sendReaction('❤️')" style="background: none; border: none; font-size: 24px; cursor: pointer;">❤️</button>
+                        </div>
+                        <div id="reactionFeed" style="margin-top: 10px; max-height: 100px; overflow-y: auto; font-size: 0.9em;">
+                            <!-- Reaction feed will appear here -->
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="startSocialVRSession()" id="joinSocialBtn">
+                    🥽 Join Social VR Space
                 </button>
             </div>
         </div>
@@ -1095,7 +1324,6 @@
                     hasWhiteboard: true,
                     supportsVoice: true
                 }
-                // ... other lectures
             ],
             currentSession: {
                 type: null,
@@ -1114,7 +1342,118 @@
             currentRating: 0
         };
 
-        // Login functionality - ID_01 Step 1
+        // Social VR Space Functions
+        var socialData = {
+            sessionStarted: false,
+            selectedSpace: null,
+            currentParticipants: [],
+            audioEnabled: true,
+            microphoneEnabled: true,
+            recentReactions: []
+        };
+
+        var socialSpaces = {
+            'study-cafe': {
+                name: '☕ Study Café',
+                description: 'Quiet study environment with ambient sounds and group study tables',
+                participants: ['Maria S.', 'Piotr K.', 'Elena M.', 'Tomasz W.', 'Anna Z.', 'Jakub P.', 'Kasia M.', 'Michał T.', 'Ola R.', 'Paweł K.', 'Ania L.', 'Marcin S.'],
+                activities: ['Study groups', 'Note sharing', 'Quiet discussion', 'Resource library'],
+                ambientSound: 'Soft café music'
+            },
+            'gaming-lounge': {
+                name: '🎮 Gaming Lounge',
+                description: 'Casual gaming space with multiplayer games and entertainment',
+                participants: ['Alex G.', 'Sam L.', 'Jordan M.', 'Taylor R.', 'Casey P.'],
+                activities: ['Multiplayer games', 'Tournaments', 'Game streaming', 'Social gaming'],
+                ambientSound: 'Gaming atmosphere'
+            },
+            'discussion-forum': {
+                name: '💬 Discussion Forum',
+                description: 'Academic discussions and group projects in virtual seminar rooms',
+                participants: ['Prof. Davis', 'Sarah K.', 'David L.', 'Emma W.', 'Ryan B.', 'Lisa C.', 'Mark D.', 'Julia F.'],
+                activities: ['Academic debates', 'Project collaboration', 'Presentations', 'Q&A sessions'],
+                ambientSound: 'Quiet conference room'
+            }
+        };
+
+        // Campus Exploration Functions
+        var campusData = {
+            explorationStarted: false,
+            currentLocation: 'entrance',
+            visitedLocations: ['library', 'cs-building', 'cafeteria', 'sports', 'admin', 'dormitory'],
+            totalLocations: 10,
+            avatarPosition: { x: 50, y: 50 }
+        };
+
+        var locationDetails = {
+            'library': {
+                name: '📚 Main Library',
+                description: 'Three-floor library with study rooms, computer labs, and extensive digital resources.',
+                hotspots: ['Study rooms', 'Computer terminals', 'Archive section', 'Group study areas']
+            },
+            'cs-building': {
+                name: '💻 Computer Science Building',
+                description: 'Modern facility with programming labs, server rooms, and lecture halls.',
+                hotspots: ['Programming labs', 'Server room', 'Lecture halls', 'Student workspace']
+            },
+            'cafeteria': {
+                name: '🍽️ Student Cafeteria',
+                description: 'Central dining facility with multiple food courts and seating areas.',
+                hotspots: ['Food courts', 'Seating areas', 'Vending machines', 'Outdoor terrace']
+            },
+            'sports': {
+                name: '🏃 Sports Complex',
+                description: 'Complete sports facility with gym, swimming pool, and outdoor courts.',
+                hotspots: ['Fitness center', 'Swimming pool', 'Basketball courts', 'Locker rooms']
+            },
+            'admin': {
+                name: '🏢 Administration Office',
+                description: 'Main administrative building with student services and faculty offices.',
+                hotspots: ['Student services', 'Registrar office', 'Financial aid', 'Faculty offices']
+            },
+            'dormitory': {
+                name: '🏠 Dormitory',
+                description: 'Student housing with common areas, study rooms, and recreational facilities.',
+                hotspots: ['Common rooms', 'Study areas', 'Laundry room', 'Recreation center']
+            },
+            'engineering': {
+                name: '⚙️ Engineering Labs',
+                description: 'Advanced engineering facilities with specialized equipment and workshops.',
+                hotspots: ['Mechanical workshop', 'Electronics lab', 'CAD stations', 'Testing equipment']
+            },
+            'art': {
+                name: '🎨 Art Gallery',
+                description: 'Creative space showcasing student artwork and hosting cultural events.',
+                hotspots: ['Exhibition halls', 'Student studios', 'Sculpture garden', 'Performance space']
+            },
+            'medical': {
+                name: '🏥 Medical Center',
+                description: 'Campus health services with medical staff and emergency facilities.',
+                hotspots: ['Consultation rooms', 'Pharmacy', 'Emergency services', 'Health education']
+            },
+            'union': {
+                name: '👥 Student Union',
+                description: 'Hub of student life with clubs, events, and social spaces.',
+                hotspots: ['Club offices', 'Event halls', 'Game room', 'Student services']
+            }
+        };
+
+        // Lab Experiment Functions
+        var currentLabStep = 0;
+        var selectedEquipment = null;
+        var labData = {
+            experimentStarted: false,
+            currentStep: 0,
+            equipmentSelected: [],
+            results: {
+                initialVolume: 25.0,
+                finalVolume: null,
+                titrantUsed: null,
+                concentration: null
+            }
+        };
+
+        // Login functionality
         function performLogin() {
             const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
@@ -1127,7 +1466,7 @@
             // Simulate login process
             showLoginProgress();
             
-            setTimeout(() => {
+            setTimeout(function() {
                 appState.isLoggedIn = true;
                 appState.currentUser.loginTime = new Date();
                 
@@ -1145,7 +1484,7 @@
             loginBtn.disabled = true;
         }
 
-        // Enhanced VR Lecture joining - Complete ID_01 scenario
+        // Enhanced VR Lecture joining
         function joinVRLecture() {
             const steps = [
                 { text: 'Loading virtual lecture hall...', delay: 1000 },
@@ -1166,7 +1505,7 @@
                 if (currentStep < steps.length) {
                     statusElement.textContent = steps[currentStep].text;
                     
-                    setTimeout(() => {
+                    setTimeout(function() {
                         switch(currentStep) {
                             case 2: // Attendance recording
                                 document.getElementById('attendanceSection').style.display = 'block';
@@ -1209,7 +1548,7 @@
             showNotification('Welcome to the virtual lecture hall! 🎓');
             
             // Simulate lecture ending after some time
-            setTimeout(() => {
+            setTimeout(function() {
                 endLecture();
             }, 8000);
         }
@@ -1255,21 +1594,20 @@
             }
         }
 
-        // Lab Experiment Functions - ID_02 Implementation
-        var currentLabStep = 0;
-        var selectedEquipment = null;
-        var labData = {
-            experimentStarted: false,
-            currentStep: 0,
-            equipmentSelected: [],
-            results: {
-                initialVolume: 25.0,
-                finalVolume: null,
-                titrantUsed: null,
-                concentration: null
+        function toggleMicrophone() {
+            var micBtn = document.getElementById('micBtn');
+            if (micBtn.textContent.includes('Unmute')) {
+                micBtn.textContent = '🔇 Mute Microphone';
+                micBtn.style.background = '#f44336';
+                showNotification('Microphone activated - you can now speak');
+            } else {
+                micBtn.textContent = '🎤 Unmute Microphone';
+                micBtn.style.background = '';
+                showNotification('Microphone muted');
             }
-        };
+        }
 
+        // Lab Functions
         function startLabExperiment() {
             var steps = [
                 { text: 'Loading virtual laboratory environment...', delay: 1000 },
@@ -1386,7 +1724,7 @@
             if (isValid) {
                 completeLabStep(currentLabStep);
             } else {
-                showNotification('Please select the correct equipment for this step', 'error');
+                showNotification('Please select the correct equipment for this step');
             }
         }
 
@@ -1469,20 +1807,471 @@
             statusElement.className = 'status online';
             statusElement.textContent = '🟢 Online';
         }
-        
-        function toggleMicrophone() {
-            microphoneActive = !microphoneActive;
-            const btn = document.getElementById('micBtn');
+
+        // Campus Functions
+        function startCampusExploration() {
+            var steps = [
+                { text: 'Loading virtual campus environment...', delay: 1000 },
+                { text: 'Positioning avatar near main entrance...', delay: 800 },
+                { text: 'Activating interactive hotspots...', delay: 1000 },
+                { text: 'Enabling free navigation mode...', delay: 800 }
+            ];
+
+            var currentStep = 0;
+            var statusElement = document.getElementById('campusEnvironmentStatus');
+            var startBtn = document.getElementById('startCampusBtn');
             
-            if (microphoneActive) {
-                btn.textContent = '🔇 Mute Microphone';
-                btn.style.background = '#f44336';
-                showNotification('Microphone activated - you can now speak');
-            } else {
-                btn.textContent = '🎤 Unmute Microphone';
-                btn.style.background = '';
-                showNotification('Microphone muted');
+            startBtn.textContent = '🔄 Loading Campus...';
+            startBtn.disabled = true;
+
+            function executeCampusStep() {
+                if (currentStep < steps.length) {
+                    statusElement.textContent = steps[currentStep].text;
+                    
+                    setTimeout(function() {
+                        currentStep++;
+                        if (currentStep < steps.length) {
+                            executeCampusStep();
+                        } else {
+                            completeCampusSetup();
+                        }
+                    }, steps[currentStep].delay);
+                }
             }
+
+            executeCampusStep();
+        }
+
+        function completeCampusSetup() {
+            document.getElementById('campusEnvironmentStatus').textContent = '✅ Campus exploration ready!';
+            document.getElementById('campusNavigationSection').style.display = 'block';
+            document.getElementById('campusMapSection').style.display = 'block';
+            document.getElementById('locationInfoSection').style.display = 'block';
+            document.getElementById('campusProgressSection').style.display = 'block';
+            document.getElementById('startCampusBtn').textContent = '🗺️ Exploration Active';
+            
+            campusData.explorationStarted = true;
+            showNotification('Welcome to virtual campus! Click locations on the map to explore.');
+            
+            // Update progress display
+            updateCampusProgress();
+            
+            // Mark visited locations on map
+            markVisitedLocations();
+        }
+
+        function visitLocation(locationId) {
+            if (!campusData.explorationStarted) {
+                showNotification('Please start campus exploration first');
+                return;
+            }
+
+            var location = locationDetails[locationId];
+            if (!location) return;
+
+            // Move avatar to location
+            moveAvatarToLocation(locationId);
+            
+            // Update current location
+            campusData.currentLocation = locationId;
+            
+            // Show location details
+            showLocationInfo(location);
+            
+            // Mark as visited if not already
+            if (campusData.visitedLocations.indexOf(locationId) === -1) {
+                campusData.visitedLocations.push(locationId);
+                showNotification('New location discovered: ' + location.name + ' ✅');
+                updateCampusProgress();
+                markLocationAsVisited(locationId);
+            } else {
+                showNotification('Revisiting: ' + location.name);
+            }
+        }
+
+        function moveAvatarToLocation(locationId) {
+            var avatar = document.getElementById('avatarPosition');
+            var locationElement = document.querySelector('[data-location="' + locationId + '"]');
+            
+            if (locationElement && avatar) {
+                var rect = locationElement.getBoundingClientRect();
+                var mapRect = document.querySelector('.campus-map').getBoundingClientRect();
+                
+                // Calculate relative position
+                var x = ((rect.left - mapRect.left + rect.width/2) / mapRect.width) * 100;
+                var y = ((rect.top - mapRect.top + rect.height/2) / mapRect.height) * 100;
+                
+                avatar.style.left = x + '%';
+                avatar.style.top = y + '%';
+                
+                // Add animation effect
+                avatar.style.transition = 'all 1s ease';
+                campusData.avatarPosition = { x: x, y: y };
+            }
+        }
+
+        function showLocationInfo(location) {
+            document.getElementById('locationName').textContent = '📍 ' + location.name;
+            document.getElementById('locationDescription').textContent = location.description;
+            
+            // Show hotspots
+            var hotspotsDiv = document.getElementById('locationHotspots');
+            hotspotsDiv.innerHTML = '<h5>🔍 Interactive Hotspots:</h5>';
+            var hotspotsList = document.createElement('ul');
+            hotspotsList.style.marginLeft = '20px';
+            hotspotsList.style.color = '#333';
+            
+            for (var i = 0; i < location.hotspots.length; i++) {
+                var li = document.createElement('li');
+                li.textContent = location.hotspots[i];
+                li.style.cursor = 'pointer';
+                li.style.padding = '2px 0';
+                li.onclick = function() { 
+                    showNotification('Exploring: ' + this.textContent); 
+                };
+                hotspotsList.appendChild(li);
+            }
+            
+            hotspotsDiv.appendChild(hotspotsList);
+            document.getElementById('exploreBtn').style.display = 'block';
+        }
+
+        function exploreLocation() {
+            var locationName = document.getElementById('locationName').textContent;
+            showNotification('Exploring ' + locationName + ' in detail...');
+            
+            // Simulate detailed exploration
+            setTimeout(function() {
+                showNotification('Exploration complete! Information added to your tour log.');
+            }, 2000);
+        }
+
+        function updateCampusProgress() {
+            var visited = campusData.visitedLocations.length;
+            var total = campusData.totalLocations;
+            var percentage = (visited / total) * 100;
+            
+            document.getElementById('campusProgressBar').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = visited + '/' + total + ' locations visited';
+            
+            // Update visited locations list
+            var visitedList = document.getElementById('visitedList');
+            visitedList.innerHTML = '';
+            
+            for (var i = 0; i < campusData.visitedLocations.length; i++) {
+                var locationId = campusData.visitedLocations[i];
+                var location = locationDetails[locationId];
+                if (location) {
+                    var li = document.createElement('li');
+                    li.textContent = location.name;
+                    visitedList.appendChild(li);
+                }
+            }
+        }
+
+        function markVisitedLocations() {
+            for (var i = 0; i < campusData.visitedLocations.length; i++) {
+                markLocationAsVisited(campusData.visitedLocations[i]);
+            }
+        }
+
+        function markLocationAsVisited(locationId) {
+            var locationElement = document.querySelector('[data-location="' + locationId + '"]');
+            if (locationElement) {
+                locationElement.classList.add('visited');
+            }
+        }
+
+        function moveDirection(direction) {
+            var directions = {
+                'forward': 'Moving forward through campus...',
+                'backward': 'Moving backward...',
+                'left': 'Turning left...',
+                'right': 'Turning right...'
+            };
+            
+            showNotification(directions[direction]);
+            
+            // Simulate movement by slightly adjusting avatar position
+            var avatar = document.getElementById('avatarPosition');
+            var currentX = parseFloat(avatar.style.left) || 50;
+            var currentY = parseFloat(avatar.style.top) || 50;
+            
+            switch(direction) {
+                case 'forward':
+                    currentY = Math.max(5, currentY - 5);
+                    break;
+                case 'backward':
+                    currentY = Math.min(95, currentY + 5);
+                    break;
+                case 'left':
+                    currentX = Math.max(5, currentX - 5);
+                    break;
+                case 'right':
+                    currentX = Math.min(95, currentX + 5);
+                    break;
+            }
+            
+            avatar.style.left = currentX + '%';
+            avatar.style.top = currentY + '%';
+        }
+
+        // Social Functions
+        function startSocialVRSession() {
+            var steps = [
+                { text: 'Loading social VR environment...', delay: 1000 },
+                { text: 'Connecting to social servers...', delay: 800 },
+                { text: 'Synchronizing with other participants...', delay: 1000 },
+                { text: 'Activating proximity voice chat...', delay: 800 }
+            ];
+
+            var currentStep = 0;
+            var statusElement = document.getElementById('socialEnvironmentStatus');
+            var joinBtn = document.getElementById('joinSocialBtn');
+            
+            joinBtn.textContent = '🔄 Connecting...';
+            joinBtn.disabled = true;
+
+            function executeSocialStep() {
+                if (currentStep < steps.length) {
+                    statusElement.textContent = steps[currentStep].text;
+                    
+                    setTimeout(function() {
+                        currentStep++;
+                        if (currentStep < steps.length) {
+                            executeSocialStep();
+                        } else {
+                            completeSocialSetup();
+                        }
+                    }, steps[currentStep].delay);
+                }
+            }
+
+            executeSocialStep();
+        }
+
+        function completeSocialSetup() {
+            document.getElementById('socialEnvironmentStatus').textContent = '✅ Connected to social VR space!';
+            document.getElementById('socialSpaceSelection').style.display = 'block';
+            document.getElementById('socialParticipantsSection').style.display = 'block';
+            document.getElementById('socialAudioSection').style.display = 'block';
+            document.getElementById('socialActivitiesSection').style.display = 'block';
+            document.getElementById('socialReactionsSection').style.display = 'block';
+            document.getElementById('joinSocialBtn').textContent = '🌐 Social Session Active';
+            
+            socialData.sessionStarted = true;
+            showNotification('Welcome to Social VR! Select a space to enter.');
+            
+            // Simulate real-time participant updates
+            startSocialUpdates();
+        }
+
+        function selectSocialSpace(spaceId) {
+            if (!socialData.sessionStarted) {
+                showNotification('Please start social session first');
+                return;
+            }
+
+            socialData.selectedSpace = spaceId;
+            var space = socialSpaces[spaceId];
+            
+            // Visual feedback for selection
+            var cards = document.querySelectorAll('.social-space-card');
+            for (var i = 0; i < cards.length; i++) {
+                cards[i].classList.remove('selected');
+            }
+            document.querySelector('[data-space="' + spaceId + '"]').classList.add('selected');
+            
+            // Update environment description
+            document.getElementById('socialEnvironmentStatus').textContent = 
+                '🏠 Entering ' + space.name + ' - ' + space.description;
+            
+            // Update participants list
+            updateParticipantsList(space.participants);
+            
+            showNotification('Entering ' + space.name + ' 🚪');
+            
+            // Position avatar in the space
+            setTimeout(function() {
+                positionAvatarInSocialSpace(spaceId);
+            }, 1000);
+        }
+
+        function updateParticipantsList(participants) {
+            var participantsList = document.getElementById('socialParticipantsList');
+            participantsList.innerHTML = '';
+            
+            // Show first 4 participants individually
+            for (var i = 0; i < Math.min(4, participants.length); i++) {
+                var participantDiv = document.createElement('div');
+                participantDiv.className = 'participant';
+                participantDiv.innerHTML = 
+                    '<div class="participant-avatar"></div>' + participants[i];
+                participantsList.appendChild(participantDiv);
+            }
+            
+            // Show remaining count
+            if (participants.length > 4) {
+                var remainingDiv = document.createElement('div');
+                remainingDiv.className = 'participant';
+                remainingDiv.innerHTML = 
+                    '<div class="participant-avatar"></div>+' + (participants.length - 4) + ' others';
+                participantsList.appendChild(remainingDiv);
+            }
+            
+            socialData.currentParticipants = participants;
+        }
+
+        function positionAvatarInSocialSpace(spaceId) {
+            showNotification('Avatar positioned in ' + socialSpaces[spaceId].name + ' ✅');
+            showNotification('Proximity voice chat activated - move close to others to hear them');
+            
+            // Update user status
+            var statusElement = document.getElementById('userStatus');
+            statusElement.className = 'status in-session';
+            statusElement.textContent = '🔵 In Social VR';
+        }
+
+        function toggleSocialMicrophone() {
+            socialData.microphoneEnabled = !socialData.microphoneEnabled;
+            var btn = document.getElementById('socialMicBtn');
+            
+            if (socialData.microphoneEnabled) {
+                btn.textContent = '🎤 Mute Microphone';
+                btn.style.background = '';
+                showNotification('Microphone enabled - others can hear you');
+            } else {
+                btn.textContent = '🔇 Microphone Muted';
+                btn.style.background = '#f44336';
+                showNotification('Microphone muted - others cannot hear you');
+            }
+        }
+
+        function toggleSocialSpeaker() {
+            socialData.audioEnabled = !socialData.audioEnabled;
+            var btn = document.getElementById('socialSpeakerBtn');
+            
+            if (socialData.audioEnabled) {
+                btn.textContent = '🔊 Mute Speaker';
+                btn.style.background = '';
+                showNotification('Audio enabled - you can hear others');
+            } else {
+                btn.textContent = '🔇 Speaker Muted';
+                btn.style.background = '#f44336';
+                showNotification('Audio muted - you cannot hear others');
+            }
+        }
+
+        function startSocialActivity(activityType) {
+            var activities = {
+                'quiz': 'Starting collaborative quiz game...',
+                'game': 'Launching mini games menu...',
+                'study-group': 'Creating study group session...',
+                'chat': 'Opening group chat interface...'
+            };
+            
+            showNotification(activities[activityType]);
+            
+            // Simulate activity start
+            setTimeout(function() {
+                switch(activityType) {
+                    case 'quiz':
+                        showNotification('📝 Quiz started! "What is the time complexity of quicksort?"');
+                        break;
+                    case 'game':
+                        showNotification('🎲 Game available: Virtual Tic-Tac-Toe');
+                        break;
+                    case 'study-group':
+                        showNotification('📚 Study group created - Topic: "Database Normalization"');
+                        break;
+                    case 'chat':
+                        showNotification('💬 Group chat opened - 12 participants online');
+                        break;
+                }
+            }, 1500);
+        }
+
+        function sendReaction(emoji) {
+            var timestamp = new Date().toLocaleTimeString();
+            var reaction = {
+                emoji: emoji,
+                user: 'Jan K.',
+                time: timestamp
+            };
+            
+            socialData.recentReactions.unshift(reaction);
+            
+            // Keep only last 10 reactions
+            if (socialData.recentReactions.length > 10) {
+                socialData.recentReactions.pop();
+            }
+            
+            updateReactionFeed();
+            showNotification('Reaction sent: ' + emoji);
+        }
+
+        function updateReactionFeed() {
+            var feedElement = document.getElementById('reactionFeed');
+            feedElement.innerHTML = '';
+            
+            for (var i = 0; i < socialData.recentReactions.length; i++) {
+                var reaction = socialData.recentReactions[i];
+                var reactionDiv = document.createElement('div');
+                reactionDiv.innerHTML = 
+                    '<strong>' + reaction.user + '</strong> ' + reaction.emoji + ' <small>(' + reaction.time + ')</small>';
+                feedElement.appendChild(reactionDiv);
+            }
+        }
+
+        function startSocialUpdates() {
+            // Simulate real-time participant count changes
+            setInterval(function() {
+                if (!socialData.sessionStarted) return;
+                
+                // Update participant counts randomly
+                var cafeUsers = document.getElementById('cafe-users');
+                var gamingUsers = document.getElementById('gaming-users');
+                var forumUsers = document.getElementById('forum-users');
+                
+                if (cafeUsers) {
+                    var currentCount = parseInt(cafeUsers.textContent);
+                    var newCount = Math.max(1, currentCount + Math.floor(Math.random() * 3) - 1);
+                    cafeUsers.textContent = newCount;
+                }
+                
+                if (gamingUsers) {
+                    var currentCount = parseInt(gamingUsers.textContent);
+                    var newCount = Math.max(1, currentCount + Math.floor(Math.random() * 3) - 1);
+                    gamingUsers.textContent = newCount;
+                }
+                
+                if (forumUsers) {
+                    var currentCount = parseInt(forumUsers.textContent);
+                    var newCount = Math.max(1, currentCount + Math.floor(Math.random() * 3) - 1);
+                    forumUsers.textContent = newCount;
+                }
+                
+                // Occasionally add automatic reactions
+                if (Math.random() < 0.1 && socialData.selectedSpace) {
+                    var randomEmojis = ['👋', '👍', '😊', '🤔'];
+                    var randomUsers = ['Maria S.', 'Piotr K.', 'Elena M.', 'Alex G.'];
+                    var randomEmoji = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
+                    var randomUser = randomUsers[Math.floor(Math.random() * randomUsers.length)];
+                    
+                    var reaction = {
+                        emoji: randomEmoji,
+                        user: randomUser,
+                        time: new Date().toLocaleTimeString()
+                    };
+                    
+                    socialData.recentReactions.unshift(reaction);
+                    if (socialData.recentReactions.length > 10) {
+                        socialData.recentReactions.pop();
+                    }
+                    updateReactionFeed();
+                }
+                
+            }, 15000); // Update every 15 seconds
         }
 
         // Feedback System
@@ -1509,8 +2298,21 @@
             closeModal('lecturesModal');
         }
 
+        function joinSession(sessionType) {
+            if (sessionType === 'lecture') {
+                joinVRLecture();
+            } else {
+                // Handle other session types
+                showNotification('Starting ' + sessionType + ' session...');
+                setTimeout(function() {
+                    showNotification(sessionType + ' session completed!');
+                }, 3000);
+            }
+        }
+
         // Utility functions
-        function showNotification(message, type = 'success') {
+        function showNotification(message, type) {
+            if (type === undefined) type = 'success';
             const notification = document.getElementById('notification');
             const notificationText = document.getElementById('notificationText');
             
@@ -1518,7 +2320,7 @@
             notification.style.display = 'block';
             notification.style.background = type === 'success' ? '#4CAF50' : '#f44336';
             
-            setTimeout(() => {
+            setTimeout(function() {
                 notification.style.display = 'none';
             }, 3000);
         }
@@ -1566,18 +2368,60 @@
                     }
                 };
             }
-        }
 
-        // Legacy function for compatibility
-        function joinSession(sessionType) {
-            if (sessionType === 'lecture') {
-                joinVRLecture();
-            } else {
-                // Handle other session types
-                showNotification(`Starting ${sessionType} session...`);
-                setTimeout(() => {
-                    showNotification(`${sessionType} session completed!`);
-                }, 3000);
+            // Reset campus modal states
+            if (modalId === 'campusModal') {
+                document.getElementById('campusNavigationSection').style.display = 'none';
+                document.getElementById('campusMapSection').style.display = 'none';
+                document.getElementById('locationInfoSection').style.display = 'none';
+                document.getElementById('campusProgressSection').style.display = 'none';
+                document.getElementById('startCampusBtn').textContent = '🥽 Start Campus Tour';
+                document.getElementById('startCampusBtn').disabled = false;
+                document.getElementById('campusEnvironmentStatus').textContent = 'Loading campus environment...';
+                
+                // Reset campus data
+                campusData = {
+                    explorationStarted: false,
+                    currentLocation: 'entrance',
+                    visitedLocations: ['library', 'cs-building', 'cafeteria', 'sports', 'admin', 'dormitory'],
+                    totalLocations: 10,
+                    avatarPosition: { x: 50, y: 50 }
+                };
+                
+                // Reset avatar position
+                var avatar = document.getElementById('avatarPosition');
+                if (avatar) {
+                    avatar.style.left = '50%';
+                    avatar.style.top = '50%';
+                }
+            }
+
+            // Reset social modal states
+            if (modalId === 'socialModal') {
+                document.getElementById('socialSpaceSelection').style.display = 'none';
+                document.getElementById('socialParticipantsSection').style.display = 'none';
+                document.getElementById('socialAudioSection').style.display = 'none';
+                document.getElementById('socialActivitiesSection').style.display = 'none';
+                document.getElementById('socialReactionsSection').style.display = 'none';
+                document.getElementById('joinSocialBtn').textContent = '🥽 Join Social VR Space';
+                document.getElementById('joinSocialBtn').disabled = false;
+                document.getElementById('socialEnvironmentStatus').textContent = 'Loading social space...';
+                
+                // Reset social data
+                socialData = {
+                    sessionStarted: false,
+                    selectedSpace: null,
+                    currentParticipants: [],
+                    audioEnabled: true,
+                    microphoneEnabled: true,
+                    recentReactions: []
+                };
+                
+                // Remove selection from space cards
+                var cards = document.querySelectorAll('.social-space-card');
+                for (var i = 0; i < cards.length; i++) {
+                    cards[i].classList.remove('selected');
+                }
             }
         }
 
@@ -1587,6 +2431,14 @@
             document.getElementById('userName').textContent = appState.currentUser.name;
             document.getElementById('userRole').textContent = appState.currentUser.role;
             document.getElementById('userAvatar').textContent = appState.currentUser.avatar;
+            
+            // Debug: Check if functions exist
+            console.log('Functions check:', {
+                startCampusExploration: typeof startCampusExploration,
+                joinVRLecture: typeof joinVRLecture,
+                startLabExperiment: typeof startLabExperiment,
+                startSocialVRSession: typeof startSocialVRSession
+            });
         }
 
         // Close modals when clicking outside
@@ -1597,7 +2449,7 @@
                     modals[i].style.display = 'none';
                 }
             }
-        }
+        };
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(event) {
@@ -1617,403 +2469,4 @@
         });
     </script>
 </body>
-</html>px 0;">
-                        <span style="margin-right: 10px;">✅</span>
-                        <span>Visit library in campus tour</span>
-                    </div>
-                    <div style="display: flex; align-items: center; margin: 10px 0;">
-                        <span style="margin-right: 10px;">✅</span>
-                        <span>Join social VR space</span>
-                    </div>
-                    <div style="display: flex; align-items: center; margin: 10px 0;">
-                        <span style="margin-right: 10px;">✅</span>
-                        <span>Complete first lab experiment</span>
-                    </div>
-                    <div style="display: flex; align-items: center; margin: 10px 0;">
-                        <span style="margin-right: 10px;">✅</span>
-                        <span>Schedule mentoring session</span>
-                    </div>
-                    <div style="display: flex; align-items: center; margin: 10px 0;">
-                        <span style="margin-right: 10px;">✅</span>
-                        <span>Use interactive whiteboard</span>
-                    </div>
-                    <div style="display: flex; align-items: center; margin: 10px 0;">
-                        <span style="margin-right: 10px;">✅</span>
-                        <span>Connect with study group</span>
-                    </div>
-                    <div style="display: flex; align-items: center; margin: 10px 0;">
-                        <span style="margin-right: 10px;">⏳</span>
-                        <span><strong>Complete full campus exploration</strong></span>
-                    </div>
-                    <div style="display: flex; align-items: center; margin: 10px 0;">
-                        <span style="margin-right: 10px;">⏹️</span>
-                        <span>Attend orientation ceremony</span>
-                    </div>
-                </div>
-                <div style="text-align: center; margin: 20px 0;">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 80%"></div>
-                    </div>
-                    <p style="color: #666; margin-top: 10px;">80% Complete - Almost there! 🏆</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification -->
-    <div id="notification" class="notification">
-        <span id="notificationText">Successfully joined VR session!</span>
-    </div>
-
-    <script>
-        // Mock data for the application
-        const mockData = {
-            user: {
-                name: "Jan Kowalski",
-                role: "Computer Science Student • Year 2",
-                avatar: "JK",
-                status: "online"
-            },
-            lectures: [
-                {
-                    id: "lec_01",
-                    name: "Advanced Algorithms",
-                    lecturer: "Prof. Johnson",
-                    time: "Today 14:00-15:30",
-                    status: "live",
-                    participants: 26,
-                    room: "Virtual Lecture Hall - Room 101"
-                },
-                {
-                    id: "lec_02",
-                    name: "Database Systems",
-                    lecturer: "Dr. Peterson",
-                    time: "Tomorrow 10:00-11:30",
-                    status: "upcoming",
-                    participants: 0,
-                    room: "Virtual Lecture Hall - Room 203"
-                },
-                {
-                    id: "lec_03",
-                    name: "Software Engineering",
-                    lecturer: "Prof. Wilson",
-                    time: "Yesterday 16:00-17:30",
-                    status: "completed",
-                    participants: 28,
-                    room: "Virtual Lecture Hall - Room 105"
-                }
-            ],
-            labs: [
-                {
-                    id: "lab_01",
-                    name: "Chemistry Lab - Titration",
-                    type: "Chemistry",
-                    progress: 0,
-                    status: "available",
-                    difficulty: "Intermediate",
-                    duration: "45 minutes"
-                },
-                {
-                    id: "lab_02",
-                    name: "Physics - Wave Properties",
-                    type: "Physics",
-                    progress: 75,
-                    status: "in_progress",
-                    difficulty: "Advanced",
-                    duration: "60 minutes"
-                },
-                {
-                    id: "lab_03",
-                    name: "Biology - Cell Structure",
-                    type: "Biology",
-                    progress: 100,
-                    status: "completed",
-                    difficulty: "Beginner",
-                    duration: "30 minutes"
-                }
-            ],
-            campus: {
-                totalLocations: 10,
-                visitedLocations: 6,
-                progress: 60,
-                locations: [
-                    { name: "Main Library", visited: true },
-                    { name: "Computer Science Building", visited: true },
-                    { name: "Student Cafeteria", visited: true },
-                    { name: "Sports Complex", visited: true },
-                    { name: "Administration Office", visited: true },
-                    { name: "Dormitory", visited: true },
-                    { name: "Engineering Labs", visited: false },
-                    { name: "Art Gallery", visited: false },
-                    { name: "Medical Center", visited: false },
-                    { name: "Student Union", visited: false }
-                ]
-            },
-            socialSpaces: [
-                {
-                    id: "social_01",
-                    name: "Study Café",
-                    participants: 12,
-                    type: "study",
-                    description: "Cozy virtual study environment with ambient sounds"
-                },
-                {
-                    id: "social_02",
-                    name: "Gaming Lounge",
-                    participants: 5,
-                    type: "recreation",
-                    description: "Multiplayer games and casual hangout space"
-                },
-                {
-                    id: "social_03",
-                    name: "Discussion Forum",
-                    participants: 8,
-                    type: "academic",
-                    description: "Academic discussions and group projects"
-                }
-            ],
-            orientation: {
-                totalTasks: 10,
-                completedTasks: 8,
-                progress: 80,
-                tasks: [
-                    { name: "Complete VR platform tutorial", completed: true },
-                    { name: "Join first virtual lecture", completed: true },
-                    { name: "Visit library in campus tour", completed: true },
-                    { name: "Join social VR space", completed: true },
-                    { name: "Complete first lab experiment", completed: true },
-                    { name: "Schedule mentoring session", completed: true },
-                    { name: "Use interactive whiteboard", completed: true },
-                    { name: "Connect with study group", completed: true },
-                    { name: "Complete full campus exploration", completed: false, current: true },
-                    { name: "Attend orientation ceremony", completed: false }
-                ]
-            }
-        };
-
-        // Application state
-        let appState = {
-            currentUser: mockData.user,
-            activeSession: null,
-            notifications: []
-        };
-
-        // Utility functions
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            const notificationText = document.getElementById('notificationText');
-            
-            notificationText.textContent = message;
-            notification.style.display = 'block';
-            notification.style.background = type === 'success' ? '#4CAF50' : '#f44336';
-            
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
-        }
-
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-            
-            // Add some mock loading animation
-            setTimeout(() => {
-                const vrEnvironments = document.querySelectorAll('.vr-environment');
-                vrEnvironments.forEach(env => {
-                    if (env.textContent.includes('Loading')) {
-                        env.innerHTML = env.innerHTML.replace('Loading immersive environment...', '✅ Environment loaded successfully!');
-                    }
-                });
-            }, 1500);
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function joinSession(sessionType) {
-            const sessionMessages = {
-                lecture: 'Joining virtual lecture hall...',
-                lab: 'Entering virtual laboratory...',
-                campus: 'Starting campus exploration...',
-                social: 'Connecting to social space...',
-                mentoring: 'Joining mentoring session...'
-            };
-
-            showNotification(sessionMessages[sessionType]);
-            
-            // Update user status
-            const statusElement = document.getElementById('userStatus');
-            statusElement.className = 'status in-session';
-            statusElement.textContent = '🔵 In VR Session';
-            
-            // Simulate session activity
-            setTimeout(() => {
-                statusElement.className = 'status online';
-                statusElement.textContent = '🟢 Online';
-                showNotification('VR session completed successfully!');
-                
-                // Update progress if it's orientation-related
-                if (sessionType === 'campus') {
-                    updateOrientationProgress();
-                }
-            }, 5000);
-            
-            // Close modal
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => modal.style.display = 'none');
-        }
-
-        function updateOrientationProgress() {
-            // Simulate completing the campus exploration task
-            mockData.orientation.completedTasks = 9;
-            mockData.orientation.progress = 90;
-            
-            // Update the task
-            mockData.orientation.tasks[8].completed = true;
-            mockData.orientation.tasks[8].current = false;
-            mockData.orientation.tasks[9].current = true;
-            
-            showNotification('Campus exploration completed! Orientation progress updated.');
-            
-            // Update the campus card progress
-            const campusCard = document.querySelector('.campus .progress-fill');
-            if (campusCard) {
-                campusCard.style.width = '100%';
-            }
-            
-            // Update campus locations visited
-            mockData.campus.visitedLocations = 10;
-            mockData.campus.progress = 100;
-        }
-
-        // Simulated real-time updates
-        function simulateRealTimeUpdates() {
-            setInterval(() => {
-                // Randomly update participant counts in social spaces
-                const socialCards = document.querySelectorAll('.social .session-time');
-                socialCards.forEach(card => {
-                    if (card.textContent.includes('students online')) {
-                        const currentCount = parseInt(card.textContent.match(/\d+/)[0]);
-                        const newCount = Math.max(1, currentCount + Math.floor(Math.random() * 3) - 1);
-                        card.textContent = `${newCount} students online`;
-                    }
-                });
-                
-                // Update lecture status occasionally
-                const lectureStatusElements = document.querySelectorAll('.lectures .session-status');
-                if (Math.random() < 0.1) { // 10% chance every interval
-                    lectureStatusElements.forEach(status => {
-                        if (status.textContent === 'LIVE' && Math.random() < 0.3) {
-                            status.textContent = 'Ending Soon';
-                            status.className = 'session-status upcoming';
-                        }
-                    });
-                }
-            }, 10000); // Update every 10 seconds
-        }
-
-        // Performance monitoring (NFR compliance simulation)
-        function monitorPerformance() {
-            const performanceMetrics = {
-                sceneLoadTime: Math.random() * 8 + 2, // 2-10 seconds
-                voiceDelay: Math.random() * 100 + 50, // 50-150 ms
-                fps: Math.floor(Math.random() * 30) + 30, // 30-60 FPS
-                activeUsers: Math.floor(Math.random() * 50) + 50 // 50-100 users
-            };
-            
-            // Log performance metrics (in real app, this would be sent to monitoring service)
-            console.log('Performance Metrics:', {
-                sceneLoadTime: performanceMetrics.sceneLoadTime.toFixed(2) + 's',
-                voiceDelay: performanceMetrics.voiceDelay.toFixed(0) + 'ms',
-                fps: performanceMetrics.fps,
-                activeUsers: performanceMetrics.activeUsers,
-                nfrCompliance: {
-                    sceneLoad: performanceMetrics.sceneLoadTime < 10 ? '✅' : '❌',
-                    voiceDelay: performanceMetrics.voiceDelay < 150 ? '✅' : '❌',
-                    minFPS: performanceMetrics.fps >= 30 ? '✅' : '❌',
-                    userCapacity: performanceMetrics.activeUsers <= 100 ? '✅' : '❌'
-                }
-            });
-        }
-
-        // Initialize the application
-        function initializeApp() {
-            // Set user information
-            document.getElementById('userName').textContent = appState.currentUser.name;
-            document.getElementById('userRole').textContent = appState.currentUser.role;
-            document.getElementById('userAvatar').textContent = appState.currentUser.avatar;
-            
-            // Start real-time updates
-            simulateRealTimeUpdates();
-            
-            // Monitor performance every 30 seconds
-            setInterval(monitorPerformance, 30000);
-            monitorPerformance(); // Initial call
-            
-            // Show welcome notification
-            setTimeout(() => {
-                showNotification('Welcome to the VR Education Platform! 🎓');
-            }, 1000);
-        }
-
-        // Close modals when clicking outside
-        window.onclick = function(event) {
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-        }
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                const modals = document.querySelectorAll('.modal');
-                modals.forEach(modal => {
-                    modal.style.display = 'none';
-                });
-            }
-        });
-
-        // Initialize the app when DOM is loaded
-        document.addEventListener('DOMContentLoaded', initializeApp);
-
-        // Additional mock functionality for demonstration
-        function scheduleNewMentoringSession() {
-            showNotification('Mentoring session request sent to Dr. Smith');
-            
-            // Add new session to the list
-            const mentoringList = document.querySelector('.mentoring .session-list');
-            const newSession = document.createElement('li');
-            newSession.className = 'session-item';
-            newSession.innerHTML = `
-                <div>
-                    <strong>Project Review</strong><br>
-                    <span class="session-time">Next week - Pending approval</span>
-                </div>
-                <span class="session-status upcoming">Pending</span>
-            `;
-            mentoringList.appendChild(newSession);
-        }
-
-        // Export functions for potential external use
-        window.VREducationPlatform = {
-            openModal,
-            closeModal,
-            joinSession,
-            showNotification,
-            mockData,
-            appState
-        };
-    </script>
-</body>
-</html>px 0;">
-                        <span style="margin-right: 10px;">✅</span>
-                        <span>Complete VR platform tutorial</span>
-                    </div>
-                    <div style="display: flex; align-items: center; margin: 10px 0;">
-                        <span style="margin-right: 10px;">✅</span>
-                        <span>Join first virtual lecture</span>
-                    </div>
-                    <div style="display: flex; align-items: center; margin: 10
+</html>
