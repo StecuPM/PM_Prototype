@@ -500,6 +500,37 @@
             background: #4c51bf;
         }
 
+        .lab-step {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #dee2e6;
+            color: #333;
+        }
+
+        .lab-step.completed {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .lab-step.current {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .step-status {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .equipment-item:hover {
+            transform: scale(1.05);
+            transition: transform 0.2s ease;
+        }
+
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -787,7 +818,7 @@
         </div>
     </div>
 
-    <!-- Labs Modal -->
+    <!-- Labs Modal - ROZSZERZONY -->
     <div id="labsModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('labsModal')">&times;</span>
@@ -796,20 +827,85 @@
                 <h3>Chemistry Lab - Acid-Base Titration</h3>
                 <div class="vr-environment">
                     <p>🧪 Virtual Chemistry Laboratory</p>
-                    <p>Equipment: Burette, Pipette, Conical Flask, pH Meter</p>
-                    <p>Safety protocols activated in VR environment</p>
+                    <p id="labEnvironmentStatus">Loading lab simulation...</p>
                 </div>
-                <div style="text-align: left; margin: 15px 0;">
-                    <h4>Experiment Steps:</h4>
-                    <ul style="margin-left: 20px;">
-                        <li>✅ Set up titration apparatus</li>
-                        <li>✅ Prepare standard solution</li>
-                        <li>⏳ Add indicator to sample</li>
-                        <li>⏹️ Perform titration</li>
-                        <li>⏹️ Record results</li>
-                    </ul>
+
+                <!-- Lab Equipment Section -->
+                <div id="labEquipmentSection" style="display: none;">
+                    <h4>🛠️ Available Equipment:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 15px 0;">
+                        <div class="equipment-item" onclick="selectEquipment('burette')">
+                            <div style="background: #e3f2fd; padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; color: #1976d2; font-weight: bold;">
+                                🧪 Burette
+                            </div>
+                        </div>
+                        <div class="equipment-item" onclick="selectEquipment('pipette')">
+                            <div style="background: #e8f5e8; padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; color: #388e3c; font-weight: bold;">
+                                🔬 Pipette
+                            </div>
+                        </div>
+                        <div class="equipment-item" onclick="selectEquipment('flask')">
+                            <div style="background: #fff3e0; padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; color: #f57c00; font-weight: bold;">
+                                🥃 Conical Flask
+                            </div>
+                        </div>
+                        <div class="equipment-item" onclick="selectEquipment('phmeter')">
+                            <div style="background: #fce4ec; padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; color: #c2185b; font-weight: bold;">
+                                📊 pH Meter
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn btn-primary" onclick="joinSession('lab')">
+
+                <!-- Step-by-step Instructions -->
+                <div id="labInstructionsSection" style="display: none;">
+                    <h4>📋 Experiment Steps:</h4>
+                    <div id="labStepsList">
+                        <div class="lab-step" data-step="1">
+                            <span class="step-status">⏹️</span> Set up titration apparatus
+                        </div>
+                        <div class="lab-step" data-step="2">
+                            <span class="step-status">⏹️</span> Prepare standard solution
+                        </div>
+                        <div class="lab-step" data-step="3">
+                            <span class="step-status">⏹️</span> Add indicator to sample
+                        </div>
+                        <div class="lab-step" data-step="4">
+                            <span class="step-status">⏹️</span> Perform titration
+                        </div>
+                        <div class="lab-step" data-step="5">
+                            <span class="step-status">⏹️</span> Record results and calculate
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Validation -->
+                <div id="labActionSection" style="display: none;">
+                    <div style="background: #f0f8ff; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #2196F3;">
+                        <h4>🎯 Current Action:</h4>
+                        <p id="currentAction">Setting up burette...</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="labProgress" style="width: 0%"></div>
+                        </div>
+                        <button class="btn btn-primary" onclick="performLabAction()" id="labActionBtn">
+                            ✅ Validate Action
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Storage -->
+                <div id="labResultsSection" style="display: none;">
+                    <div style="background: #e8f5e8; padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <h4>📊 Experiment Results:</h4>
+                        <p><strong>Initial Volume:</strong> <span id="initialVolume">25.0 mL</span></p>
+                        <p><strong>Final Volume:</strong> <span id="finalVolume">--</span></p>
+                        <p><strong>Titrant Used:</strong> <span id="titrantUsed">--</span></p>
+                        <p><strong>Calculated Concentration:</strong> <span id="concentration">--</span></p>
+                        <div id="labFeedback" style="margin-top: 10px; font-weight: bold;"></div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="startLabExperiment()" id="startLabBtn">
                     🥽 Enter Virtual Lab
                 </button>
             </div>
@@ -1159,8 +1255,220 @@
             }
         }
 
-        // Voice Interaction
-        var microphoneActive = false;
+        // Lab Experiment Functions - ID_02 Implementation
+        var currentLabStep = 0;
+        var selectedEquipment = null;
+        var labData = {
+            experimentStarted: false,
+            currentStep: 0,
+            equipmentSelected: [],
+            results: {
+                initialVolume: 25.0,
+                finalVolume: null,
+                titrantUsed: null,
+                concentration: null
+            }
+        };
+
+        function startLabExperiment() {
+            var steps = [
+                { text: 'Loading virtual laboratory environment...', delay: 1000 },
+                { text: 'Initializing safety protocols...', delay: 800 },
+                { text: 'Calibrating equipment sensors...', delay: 1000 },
+                { text: 'Setting up experiment workspace...', delay: 800 }
+            ];
+
+            var currentStep = 0;
+            var statusElement = document.getElementById('labEnvironmentStatus');
+            var startBtn = document.getElementById('startLabBtn');
+            
+            startBtn.textContent = '🔄 Initializing Lab...';
+            startBtn.disabled = true;
+
+            function executeLabStep() {
+                if (currentStep < steps.length) {
+                    statusElement.textContent = steps[currentStep].text;
+                    
+                    setTimeout(function() {
+                        currentStep++;
+                        if (currentStep < steps.length) {
+                            executeLabStep();
+                        } else {
+                            completeLabSetup();
+                        }
+                    }, steps[currentStep].delay);
+                }
+            }
+
+            executeLabStep();
+        }
+
+        function completeLabSetup() {
+            document.getElementById('labEnvironmentStatus').textContent = '✅ Virtual lab ready for experimentation!';
+            document.getElementById('labEquipmentSection').style.display = 'block';
+            document.getElementById('labInstructionsSection').style.display = 'block';
+            document.getElementById('labActionSection').style.display = 'block';
+            document.getElementById('startLabBtn').textContent = '🧪 Lab Session Active';
+            
+            labData.experimentStarted = true;
+            showNotification('Virtual laboratory is ready! Select equipment to begin.');
+            
+            // Start first step
+            startLabStep(1);
+        }
+
+        function selectEquipment(equipment) {
+            selectedEquipment = equipment;
+            var equipmentNames = {
+                'burette': 'Burette',
+                'pipette': 'Pipette', 
+                'flask': 'Conical Flask',
+                'phmeter': 'pH Meter'
+            };
+            
+            showNotification('Selected: ' + equipmentNames[equipment]);
+            
+            // Add to selected equipment if not already added
+            if (labData.equipmentSelected.indexOf(equipment) === -1) {
+                labData.equipmentSelected.push(equipment);
+            }
+            
+            // Update current action based on step and equipment
+            updateCurrentAction();
+        }
+
+        function startLabStep(stepNumber) {
+            currentLabStep = stepNumber;
+            labData.currentStep = stepNumber;
+            
+            // Update step visual status
+            var steps = document.querySelectorAll('.lab-step');
+            for (var i = 0; i < steps.length; i++) {
+                var step = steps[i];
+                var stepNum = parseInt(step.getAttribute('data-step'));
+                
+                if (stepNum < stepNumber) {
+                    step.classList.add('completed');
+                    step.querySelector('.step-status').textContent = '✅';
+                } else if (stepNum === stepNumber) {
+                    step.classList.add('current');
+                    step.classList.remove('completed');
+                    step.querySelector('.step-status').textContent = '⏳';
+                } else {
+                    step.classList.remove('completed', 'current');
+                    step.querySelector('.step-status').textContent = '⏹️';
+                }
+            }
+            
+            updateCurrentAction();
+        }
+
+        function updateCurrentAction() {
+            var actions = {
+                1: 'Set up the burette and secure it in the clamp',
+                2: 'Fill the burette with standard NaOH solution',
+                3: 'Add phenolphthalein indicator to the sample',
+                4: 'Begin titration by slowly adding NaOH',
+                5: 'Record the final burette reading'
+            };
+            
+            document.getElementById('currentAction').textContent = actions[currentLabStep] || 'Follow the instructions';
+            
+            // Update progress
+            var progress = (currentLabStep - 1) * 20;
+            document.getElementById('labProgress').style.width = progress + '%';
+        }
+
+        function performLabAction() {
+            // Validate current action
+            var isValid = validateLabAction(currentLabStep, selectedEquipment);
+            
+            if (isValid) {
+                completeLabStep(currentLabStep);
+            } else {
+                showNotification('Please select the correct equipment for this step', 'error');
+            }
+        }
+
+        function validateLabAction(step, equipment) {
+            var requiredEquipment = {
+                1: 'burette',
+                2: 'burette', 
+                3: 'pipette',
+                4: 'burette',
+                5: 'phmeter'
+            };
+            
+            return equipment === requiredEquipment[step];
+        }
+
+        function completeLabStep(step) {
+            showNotification('Step ' + step + ' completed successfully! ✅');
+            
+            // Generate mock results for each step
+            switch(step) {
+                case 2:
+                    showNotification('Standard solution prepared: 0.1 M NaOH');
+                    break;
+                case 3:
+                    showNotification('Indicator added - solution is now pink');
+                    break;
+                case 4:
+                    labData.results.finalVolume = (Math.random() * 5 + 20).toFixed(1);
+                    labData.results.titrantUsed = (25.0 - labData.results.finalVolume).toFixed(1);
+                    showNotification('Titration complete - endpoint reached');
+                    break;
+                case 5:
+                    // Calculate concentration
+                    var molarity = (0.1 * labData.results.titrantUsed / 25.0).toFixed(3);
+                    labData.results.concentration = molarity + ' M';
+                    showNotification('Results calculated and stored');
+                    document.getElementById('labResultsSection').style.display = 'block';
+                    updateLabResults();
+                    break;
+            }
+            
+            if (step < 5) {
+                setTimeout(function() {
+                    startLabStep(step + 1);
+                }, 1500);
+            } else {
+                completeExperiment();
+            }
+        }
+
+        function updateLabResults() {
+            document.getElementById('finalVolume').textContent = labData.results.finalVolume + ' mL';
+            document.getElementById('titrantUsed').textContent = labData.results.titrantUsed + ' mL';
+            document.getElementById('concentration').textContent = labData.results.concentration;
+            
+            // Provide feedback
+            var concentration = parseFloat(labData.results.concentration);
+            var feedback = '';
+            var feedbackElement = document.getElementById('labFeedback');
+            
+            if (concentration >= 0.095 && concentration <= 0.105) {
+                feedback = '🎉 Excellent! Your results are within acceptable range.';
+                feedbackElement.style.color = '#28a745';
+            } else {
+                feedback = '⚠️ Results may need verification. Check your technique.';
+                feedbackElement.style.color = '#ffc107';
+            }
+            
+            feedbackElement.textContent = feedback;
+        }
+
+        function completeExperiment() {
+            showNotification('🎉 Lab experiment completed successfully!');
+            document.getElementById('labActionBtn').textContent = '✅ Experiment Complete';
+            document.getElementById('labActionBtn').disabled = true;
+            document.getElementById('currentAction').textContent = 'All steps completed! Review your results.';
+            
+            // Update user status
+            var statusElement = document.getElementById('userStatus');
+            statusElement.className = 'status online';
+            statusElement.textContent = '🟢 Online';
+        }
         
         function toggleMicrophone() {
             microphoneActive = !microphoneActive;
@@ -1231,6 +1539,32 @@
                 document.getElementById('joinLectureBtn').textContent = '🥽 Enter VR Lecture Hall';
                 document.getElementById('joinLectureBtn').disabled = false;
                 document.getElementById('environmentStatus').textContent = 'Loading immersive environment...';
+            }
+            
+            // Reset lab modal states
+            if (modalId === 'labsModal') {
+                document.getElementById('labEquipmentSection').style.display = 'none';
+                document.getElementById('labInstructionsSection').style.display = 'none';
+                document.getElementById('labActionSection').style.display = 'none';
+                document.getElementById('labResultsSection').style.display = 'none';
+                document.getElementById('startLabBtn').textContent = '🥽 Enter Virtual Lab';
+                document.getElementById('startLabBtn').disabled = false;
+                document.getElementById('labEnvironmentStatus').textContent = 'Loading lab simulation...';
+                
+                // Reset lab data
+                currentLabStep = 0;
+                selectedEquipment = null;
+                labData = {
+                    experimentStarted: false,
+                    currentStep: 0,
+                    equipmentSelected: [],
+                    results: {
+                        initialVolume: 25.0,
+                        finalVolume: null,
+                        titrantUsed: null,
+                        concentration: null
+                    }
+                };
             }
         }
 
