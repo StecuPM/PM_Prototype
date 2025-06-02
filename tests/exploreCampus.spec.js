@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('ExploreCapmusTests - Access and Visibility', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('http://192.168.1.3:8080/');
+        await page.goto('/');
         await page.fill('#loginUsername', 'jan.kowalski@student.put.poznan.pl');
         await page.fill('#loginPassword', 'password123');
         await page.click('text=🚀 Enter Metaverse Platform');

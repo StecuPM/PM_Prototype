@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('VR Education Platform - Business Flow Tests', () => {
 
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://192.168.1.3:8080/');
+    await page.goto('/');
   });
 
   test('Successful login shows dashboard and user info', async ({ page }) => {
