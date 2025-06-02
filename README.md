@@ -1,69 +1,116 @@
-# PM_Prototype
-Prototype with the results of its validation
-Kluczowe Funkcje:
-1. Dashboard użytkownika
+# 🎓 PM_Prototype
 
-Panel główny z informacjami o studencie
-Status online/w sesji VR
-Przegląd wszystkich dostępnych modułów
+## 📌 Project Overview
 
-2. Wirtualne wykłady (ID_01)
+**PM_Prototype** is a functional prototype of a VR-based educational platform. It simulates a virtual learning environment for students and lecturers, including immersive lectures, labs, campus exploration, mentoring sessions, and social spaces. It has been validated using mock data and tested with automated scenarios.
 
-Lista wykładów na żywo, nadchodzących i zakończonych
-Możliwość dołączenia do wirtualnej sali wykładowej
-Wyświetlanie uczestników sesji
+---
 
-3. Wirtualne laboratoria (ID_02)
+## ▶️ Running the Project
 
-Symulacje eksperymentów chemicznych, fizycznych
-Śledzenie postępów w eksperymentach
-Instrukcje krok po kroku
+### 1. Install dependencies
+```bash
+npm install
+```
+2. Launch the local server (optional if using static hosting)
+```bash
+npx serve .
+```
+Or simply open index.html in your browser.
 
-4. Eksploracja kampusu (ID_03)
+✅ Running Automated Tests (Playwright)
+1. Install Playwright dependencies
+```bash
+npx playwright install
+```
+2. Run all tests
+```bash
+npx playwright test
+```
+3. View test report
+```bash
+npx playwright show-report
+```
 
-Wirtualna mapa uniwersytetu
-Śledzenie odwiedzonych lokalizacji
-Pasek postępu zwiedzania
+## 📦 Available Scripts
+Command	Description
+```bash
+npm run serve	#Run the static HTML server
+npm test	#Run tests with Playwright and auto-server
+npm run test:ui	#Run Playwright tests in interactive mode
+```
 
-5. Przestrzenie społeczne (ID_04)
+---
 
-Kawiarnia studencka VR
-Sala gier
-Czat głosowy i interakcje
+## 🧩 Key Features
 
-6. Sesje mentorskie (ID_05)
+### 1. User Dashboard
+- Displays student information
+- Online/VR session status
+- Overview of all available modules
 
-Zaplanowane spotkania z wykładowcami
-Interaktywna tablica
-Udostępnianie ekranu
+### 2. Virtual Lectures (ID_01)
+- Live, upcoming, and past lecture lists
+- Join virtual lecture halls
+- Display participants
 
-7. Postęp orientacji (ID_07)
+### 3. Virtual Laboratories (ID_02)
+- Simulated chemistry and physics experiments
+- Track experiment progress
+- Step-by-step guidance
 
-Lista zadań do wykonania
-Pasek postępu
-System odznak cyfrowych
+### 4. Campus Exploration (ID_03)
+- Virtual map of the university
+- Track visited locations
+- Exploration progress bar
 
-Implementacja techniczna:
-Zgodność z NFR (Non-Functional Requirements):
+### 5. Social Spaces (ID_04)
+- VR student café
+- Game room
+- Voice chat and interaction
 
-Performance: Symulacja ładowania scen < 10s
-Voice delay: Monitoring opóźnień < 150ms
-Scalability: Obsługa 100+ użytkowników
-Security: Symulacja szyfrowania TLS 1.2+
+### 6. Mentoring Sessions (ID_05)
+- Scheduled faculty meetings
+- Interactive whiteboard
+- Screen sharing support
 
-Funkcje dodatkowe:
+### 7. Orientation Progress (ID_07)
+- Orientation task list
+- Progress bar
+- Digital badge system
 
-Powiadomienia real-time
-Monitorowanie wydajności
-Responsywny design
-Animacje i efekty glassmorphism
-Symulacja sesji VR
+---
 
-Mock Data:
-Prototyp używa realistycznych danych testowych obejmujących:
+## ⚙️ Technical Implementation
 
-Profile studentów i wykładowców
-Harmonogram wykładów
-Postępy w laboratoriach
-Statystyki orientacji
-Metryki wydajności
+### Non-Functional Requirements
+- **Performance:** Scene loading simulated under 10s
+- **Voice Delay:** Under 150ms
+- **Scalability:** Simulated support for 100+ users
+- **Security:** Simulated TLS 1.2+ encryption
+
+### Additional Features
+- Real-time notifications
+- Performance monitoring
+- Responsive design with glassmorphism
+- VR session simulation
+
+---
+
+## 📊 Mock Data
+This prototype uses realistic test data including:
+- Student and lecturer profiles
+- Lecture schedules
+- Lab progress tracking
+- Orientation statistics
+- Performance metrics
+
+---
+
+## 🧪 Sample Test Coverage
+- Login flow
+- VR lecture room join and attendance
+- UI visibility and accessibility
+- Microphone toggle functionality
+- Navigation between modules
+
