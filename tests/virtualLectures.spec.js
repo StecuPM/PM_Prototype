@@ -23,7 +23,7 @@ test.describe('LectureTests - Access and Visibility', () => {
 
 test.describe('LectureTests - Inside Lecture Hall', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('http://192.168.1.3:8080/');
+        await page.goto('/');
         await page.fill('#loginUsername', 'jan.kowalski@student.put.poznan.pl');
         await page.fill('#loginPassword', 'password123');
         await page.click('text=🚀 Enter Metaverse Platform');
@@ -69,6 +69,13 @@ test.describe('LectureTests - Inside Lecture Hall', () => {
     test('you can leave lecture', async ({ page }) => {
         await page.locator('#lecturesModal').getByText('×').click();
         await expect(page.getByText('🌐 VR Education Platform Immersive Learning Experience - DREAMTEAM Project JK')).toBeVisible();
+    });
+    test('user status is updated', async ({ page }) => {
+        await page.locator('#lecturesModal').getByText('×').click();
+        await expect(page.getByText('🔵 In VR Lecture')).toBeVisible();
+        await page.getByText('🎓 Virtual Lectures Advanced').click();
+        await page.locator('#lecturesModal').getByText('×').click();
+        await expect(page.getByText('🟢 Online')).toBeVisible({ timeout: 10000 });
     });
 
 });

@@ -9,11 +9,11 @@ test.describe('VirtualLab - Access and Visibility', () => {
         await page.click('text=🚀 Enter Metaverse Platform');
     });
 
-    test('Lectures section is visible', async ({ page }) => {
+    test('Virtual labs section is visible', async ({ page }) => {
         await expect(page.getByText('🔬 Virtual Labs Chemistry Lab')).toBeVisible();
     });
 
-    test('can join a lecture', async ({ page }) => {
+    test('can join a virtual lab', async ({ page }) => {
         await page.getByText('🔬 Virtual Labs Chemistry Lab').click();
         await page.getByRole('button', { name: '🥽 Enter Virtual Lab' }).click();
         await expect(page.getByText('✅ Virtual lab ready for')).toBeVisible({ timeout: 10000 });
@@ -23,7 +23,7 @@ test.describe('VirtualLab - Access and Visibility', () => {
 
 test.describe('VirtualLab - Inside ', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('http://192.168.1.3:8080/');
+        await page.goto('/');
         await page.fill('#loginUsername', 'jan.kowalski@student.put.poznan.pl');
         await page.fill('#loginPassword', 'password123');
         await page.click('text=🚀 Enter Metaverse Platform');

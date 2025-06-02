@@ -9,12 +9,12 @@ test.describe('ExploreCapmusTests - Access and Visibility', () => {
         await page.click('text=🚀 Enter Metaverse Platform');
     });
 
-    test('Lectures section is visible', async ({ page }) => {
+    test('explore section is visible', async ({ page }) => {
         await expect(page.getByText('🏛️ Explore Campus Discover')).toBeVisible();
 
     });
 
-    test('can join a lecture', async ({ page }) => {
+    test('can join a explore', async ({ page }) => {
         await page.getByText('🏛️ Explore Campus Discover').click();
         await page.getByRole('button', { name: '🥽 Start Campus Tour' }).click();
         await expect(page.getByText('✅ Campus exploration ready!')).toBeVisible({ timeout: 10000 });
@@ -24,7 +24,7 @@ test.describe('ExploreCapmusTests - Access and Visibility', () => {
 
 test.describe('ExploreCampus - inside', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('http://192.168.1.3:8080/');
+        await page.goto('/');
         await page.fill('#loginUsername', 'jan.kowalski@student.put.poznan.pl');
         await page.fill('#loginPassword', 'password123');
         await page.click('text=🚀 Enter Metaverse Platform');

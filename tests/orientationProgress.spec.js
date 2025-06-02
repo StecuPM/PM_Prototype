@@ -9,20 +9,20 @@ test.describe('OrientationProgress - Access and Visibility', () => {
         await page.click('text=🚀 Enter Metaverse Platform');
     });
 
-    test('Lectures section is visible', async ({ page }) => {
+    test('Orientation Progress section is visible', async ({ page }) => {
         await expect(page.getByText('📈 Orientation Progress 8/10')).toBeVisible();
 
 
     });
 
-    test('can join a lecture', async ({ page }) => {
+    test('can join a orientation progress', async ({ page }) => {
         await page.getByText('📈 Orientation Progress 8/10').click();
         await expect(page.getByText('× 📈 Orientation Progress')).toBeVisible();
     });
 });
 
 
-test.describe('OrienationProgres - Inside ', () => {
+test.describe('OrientationProgress - Inside ', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/');
         await page.fill('#loginUsername', 'jan.kowalski@student.put.poznan.pl');
@@ -33,7 +33,7 @@ test.describe('OrienationProgres - Inside ', () => {
         await page.getByText('📈 Orientation Progress 8/10').click();
     });
 
-    test('you get progress corectly', async ({ page }) => {
+    test('you get progress correctly', async ({ page }) => {
         await expect(page.getByText('📈 Orientation Progress 8/10')).toBeVisible();
         await page.locator('#progressModal').getByText('×').click();
         await page.getByText('🏛️ Explore Campus Discover').click();
