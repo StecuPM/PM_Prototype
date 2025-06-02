@@ -1,0 +1,17 @@
+{
+  "name": "pm_prototype",
+  "version": "1.0.0",
+  "description": "Prototype with the results of its validation\r Kluczowe Funkcje:\r 1. Dashboard użytkownika",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.15.29"
+  }
+}

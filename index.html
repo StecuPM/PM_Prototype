@@ -634,7 +634,7 @@
             <div class="login-form">
                 <input type="text" id="loginUsername" placeholder="Student ID or Email"
                     value="jan.kowalski@student.put.poznan.pl">
-                <input type="password" id="loginPassword" placeholder="Password" value="••••••••">
+                <input type="password" id="loginPassword" placeholder="Password" value="password123">
                 <button class="btn btn-primary" onclick="performLogin()" style="width: 100%; margin-top: 15px;">
                     🚀 Enter Metaverse Platform
                 </button>
@@ -1517,6 +1517,10 @@
 
             if (!username || !password) {
                 alert('Please enter both username and password');
+                return;
+            }
+            if (username !== 'jan.kowalski@student.put.poznan.pl' || password !== 'password123') {
+                alert('Invalid username or password');
                 return;
             }
 
